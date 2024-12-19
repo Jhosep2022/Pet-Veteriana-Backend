@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mi-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5433/PetVeterinariaDB
+    username: postgres
+    password: jose
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    root: info # Nivel de logging general
+    org.springframework: debug # Nivel de logging para Spring Framework
