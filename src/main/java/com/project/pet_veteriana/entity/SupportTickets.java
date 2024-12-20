@@ -7,10 +7,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Support_tickets")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class SupportTickets implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -39,4 +35,74 @@ public class SupportTickets implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
+
+
+    public SupportTickets() {
+    }
+
+    public SupportTickets(Integer supportTicketsId, String subject, String description, Boolean status, LocalDateTime updatedAt, LocalDateTime createdAt, Users user) {
+        this.supportTicketsId = supportTicketsId;
+        this.subject = subject;
+        this.description = description;
+        this.status = status;
+        this.updatedAt = updatedAt;
+        this.createdAt = createdAt;
+        this.user = user;
+    }
+
+    public Integer getSupportTicketsId() {
+        return supportTicketsId;
+    }
+
+    public void setSupportTicketsId(Integer supportTicketsId) {
+        this.supportTicketsId = supportTicketsId;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
+    }
 }

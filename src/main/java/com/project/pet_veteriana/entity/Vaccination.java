@@ -7,10 +7,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Vaccination")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Vaccination implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,4 +21,37 @@ public class Vaccination implements Serializable {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    public Vaccination() {
+    }
+
+    public Vaccination(Integer vaccinationId, String name, LocalDateTime createdAt) {
+        this.vaccinationId = vaccinationId;
+        this.name = name;
+        this.createdAt = createdAt;
+    }
+
+    public Integer getVaccinationId() {
+        return vaccinationId;
+    }
+
+    public void setVaccinationId(Integer vaccinationId) {
+        this.vaccinationId = vaccinationId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

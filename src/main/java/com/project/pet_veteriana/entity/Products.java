@@ -8,10 +8,6 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "Products")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Products implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -21,8 +17,8 @@ public class Products implements Serializable {
     @Column(name = "product_id", nullable = false)
     private Integer productId;
 
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    @Column(name = "price", nullable = false, precision = 10)
+    private Double price;
 
     @Column(name = "stock", nullable = false)
     private Integer stock;
@@ -42,4 +38,73 @@ public class Products implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    public Products() {
+    }
+
+    public Products(Integer productId, Double price, Integer stock, Integer createdAt, Boolean status, Providers provider, Category category) {
+        this.productId = productId;
+        this.price = price;
+        this.stock = stock;
+        this.createdAt = createdAt;
+        this.status = status;
+        this.provider = provider;
+        this.category = category;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public Integer getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Integer createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public Providers getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Providers provider) {
+        this.provider = provider;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

@@ -9,10 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "Specialty")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+
 public class Specialty implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,4 +28,46 @@ public class Specialty implements Serializable {
     // Relación con SprecialityProviders
     @OneToMany(mappedBy = "specialty", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SprecialityProviders> specialtyProviders;
+
+    public Specialty() {
+    }
+
+    public Specialty(Integer specialtyId, String nameSpecialty, LocalDateTime createdAt, List<SprecialityProviders> specialtyProviders) {
+        this.specialtyId = specialtyId;
+        this.nameSpecialty = nameSpecialty;
+        this.createdAt = createdAt;
+        this.specialtyProviders = specialtyProviders;
+    }
+
+    public Integer getSpecialtyId() {
+        return specialtyId;
+    }
+
+    public void setSpecialtyId(Integer specialtyId) {
+        this.specialtyId = specialtyId;
+    }
+
+    public String getNameSpecialty() {
+        return nameSpecialty;
+    }
+
+    public void setNameSpecialty(String nameSpecialty) {
+        this.nameSpecialty = nameSpecialty;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<SprecialityProviders> getSpecialtyProviders() {
+        return specialtyProviders;
+    }
+
+    public void setSpecialtyProviders(List<SprecialityProviders> specialtyProviders) {
+        this.specialtyProviders = specialtyProviders;
+    }
 }

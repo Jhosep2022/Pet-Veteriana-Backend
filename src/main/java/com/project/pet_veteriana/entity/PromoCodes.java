@@ -9,10 +9,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Promo_Codes")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class PromoCodes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,8 +27,8 @@ public class PromoCodes implements Serializable {
     @Column(name = "discount_type", nullable = false, length = 50)
     private String discountType;
 
-    @Column(name = "discount_value", nullable = false, precision = 5, scale = 2)
-    private BigDecimal discountValue;
+    @Column(name = "discount_value", nullable = false, precision = 10)
+    private Double discountValue;
 
     @Column(name = "max_uses", nullable = false)
     private Integer maxUses;
@@ -55,4 +51,118 @@ public class PromoCodes implements Serializable {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    public PromoCodes() {
+    }
+
+    public PromoCodes(Integer promoId, String code, String description, String discountType, Double discountValue, Integer maxUses, Integer currentUses, LocalDateTime startDate, LocalDateTime endDate, Boolean isActive, Providers provider, LocalDateTime createdAt) {
+        this.promoId = promoId;
+        this.code = code;
+        this.description = description;
+        this.discountType = discountType;
+        this.discountValue = discountValue;
+        this.maxUses = maxUses;
+        this.currentUses = currentUses;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.isActive = isActive;
+        this.provider = provider;
+        this.createdAt = createdAt;
+    }
+
+    public Integer getPromoId() {
+        return promoId;
+    }
+
+    public void setPromoId(Integer promoId) {
+        this.promoId = promoId;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
+    }
+
+    public Double getDiscountValue() {
+        return discountValue;
+    }
+
+    public void setDiscountValue(Double discountValue) {
+        this.discountValue = discountValue;
+    }
+
+    public Integer getMaxUses() {
+        return maxUses;
+    }
+
+    public void setMaxUses(Integer maxUses) {
+        this.maxUses = maxUses;
+    }
+
+    public Integer getCurrentUses() {
+        return currentUses;
+    }
+
+    public void setCurrentUses(Integer currentUses) {
+        this.currentUses = currentUses;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public Providers getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Providers provider) {
+        this.provider = provider;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

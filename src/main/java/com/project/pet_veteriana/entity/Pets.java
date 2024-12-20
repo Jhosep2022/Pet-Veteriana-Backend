@@ -9,10 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "Pets")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Pets implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -34,11 +30,11 @@ public class Pets implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "weight", precision = 5, scale = 2, nullable = false)
-    private Double weight;
+    @Column(name = "weight", nullable = false, precision = 10)
+    private Double weight;  // Sin scale ni precision
 
-    @Column(name = "height", precision = 5, scale = 2, nullable = false)
-    private Double height;
+    @Column(name = "height", nullable = false, precision = 10)
+    private Double height;  // Sin scale ni precision
 
     @Column(name = "gender", length = 50, nullable = false)
     private String gender;
@@ -59,11 +55,117 @@ public class Pets implements Serializable {
     @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
     private ImageS3 image;
 
-    // Relación con VaccinationSchedule
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<VaccinationSchedule> vaccinationSchedules;
+    public Pets() {
+    }
 
-    // Relación con MedicalHistory
-    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MedicalHistory> medicalHistories;
+    public Pets(Integer petId, String petName, String petBreed, String petAge, LocalDateTime createdAt, Double weight, Double height, String gender, String allergies, String behaviorNotes, Users user, ImageS3 image) {
+        this.petId = petId;
+        this.petName = petName;
+        this.petBreed = petBreed;
+        this.petAge = petAge;
+        this.createdAt = createdAt;
+        this.weight = weight;
+        this.height = height;
+        this.gender = gender;
+        this.allergies = allergies;
+        this.behaviorNotes = behaviorNotes;
+        this.user = user;
+        this.image = image;
+    }
+
+    public Integer getPetId() {
+        return petId;
+    }
+
+    public void setPetId(Integer petId) {
+        this.petId = petId;
+    }
+
+    public String getPetName() {
+        return petName;
+    }
+
+    public void setPetName(String petName) {
+        this.petName = petName;
+    }
+
+    public String getPetBreed() {
+        return petBreed;
+    }
+
+    public void setPetBreed(String petBreed) {
+        this.petBreed = petBreed;
+    }
+
+    public String getPetAge() {
+        return petAge;
+    }
+
+    public void setPetAge(String petAge) {
+        this.petAge = petAge;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public Double getHeight() {
+        return height;
+    }
+
+    public void setHeight(Double height) {
+        this.height = height;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getAllergies() {
+        return allergies;
+    }
+
+    public void setAllergies(String allergies) {
+        this.allergies = allergies;
+    }
+
+    public String getBehaviorNotes() {
+        return behaviorNotes;
+    }
+
+    public void setBehaviorNotes(String behaviorNotes) {
+        this.behaviorNotes = behaviorNotes;
+    }
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
+    }
+
+    public ImageS3 getImage() {
+        return image;
+    }
+
+    public void setImage(ImageS3 image) {
+        this.image = image;
+    }
 }

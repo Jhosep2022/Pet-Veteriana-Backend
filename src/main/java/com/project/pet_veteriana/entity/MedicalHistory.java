@@ -8,10 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Medical_history")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+
 public class MedicalHistory implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,4 +34,64 @@ public class MedicalHistory implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_id", nullable = false)
     private Pets pet;
+
+    public MedicalHistory() {
+    }
+
+    public MedicalHistory(Integer medicalHistoryId, LocalDateTime date, String visitReason, String symptoms, LocalDateTime createdAt, Pets pet) {
+        this.medicalHistoryId = medicalHistoryId;
+        this.date = date;
+        this.visitReason = visitReason;
+        this.symptoms = symptoms;
+        this.createdAt = createdAt;
+        this.pet = pet;
+    }
+
+    public Integer getMedicalHistoryId() {
+        return medicalHistoryId;
+    }
+
+    public void setMedicalHistoryId(Integer medicalHistoryId) {
+        this.medicalHistoryId = medicalHistoryId;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public String getVisitReason() {
+        return visitReason;
+    }
+
+    public void setVisitReason(String visitReason) {
+        this.visitReason = visitReason;
+    }
+
+    public String getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Pets getPet() {
+        return pet;
+    }
+
+    public void setPet(Pets pet) {
+        this.pet = pet;
+    }
 }

@@ -9,10 +9,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Services")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Services implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -25,8 +21,8 @@ public class Services implements Serializable {
     @Column(name = "service_name", nullable = false, length = 250)
     private String serviceName;
 
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    @Column(name = "price", nullable = false, precision = 10)
+    private Double price;
 
     @Column(name = "duration", nullable = false)
     private Integer duration;
@@ -49,4 +45,91 @@ public class Services implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
     private ImageS3 image;
+
+    public Services() {
+    }
+
+    public Services(Integer serviceId, String serviceName, Double price, Integer duration, String description, LocalDateTime createdAt, Boolean status, Providers provider, ImageS3 image) {
+        this.serviceId = serviceId;
+        this.serviceName = serviceName;
+        this.price = price;
+        this.duration = duration;
+        this.description = description;
+        this.createdAt = createdAt;
+        this.status = status;
+        this.provider = provider;
+        this.image = image;
+    }
+
+    public Integer getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Integer serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public Providers getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Providers provider) {
+        this.provider = provider;
+    }
+
+    public ImageS3 getImage() {
+        return image;
+    }
+
+    public void setImage(ImageS3 image) {
+        this.image = image;
+    }
 }

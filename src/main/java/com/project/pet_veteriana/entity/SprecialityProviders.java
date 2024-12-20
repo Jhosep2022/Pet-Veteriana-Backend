@@ -6,10 +6,6 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "Spreciality_Providers")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class SprecialityProviders implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,4 +24,37 @@ public class SprecialityProviders implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Providers provider;
+
+    public SprecialityProviders() {
+    }
+
+    public SprecialityProviders(Integer idSpPro, Specialty specialty, Providers provider) {
+        this.idSpPro = idSpPro;
+        this.specialty = specialty;
+        this.provider = provider;
+    }
+
+    public Integer getIdSpPro() {
+        return idSpPro;
+    }
+
+    public void setIdSpPro(Integer idSpPro) {
+        this.idSpPro = idSpPro;
+    }
+
+    public Specialty getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(Specialty specialty) {
+        this.specialty = specialty;
+    }
+
+    public Providers getProvider() {
+        return provider;
+    }
+
+    public void setProvider(Providers provider) {
+        this.provider = provider;
+    }
 }

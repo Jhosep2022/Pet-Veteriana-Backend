@@ -8,10 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ImageS3")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+
 public class ImageS3 implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -33,7 +30,55 @@ public class ImageS3 implements Serializable {
     @Column(name = "upload_date", nullable = false)
     private LocalDateTime uploadDate;
 
-    @ManyToOne
-    @JoinColumn(name = "Providers_provider_id", referencedColumnName = "provider_id", nullable = false)
-    private Providers provider;
+
+    public ImageS3() {
+    }
+
+    public ImageS3(Integer imageId, String fileName, String fileType, String size, LocalDateTime uploadDate) {
+        this.imageId = imageId;
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.size = size;
+        this.uploadDate = uploadDate;
+    }
+
+    public Integer getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(Integer imageId) {
+        this.imageId = imageId;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public LocalDateTime getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(LocalDateTime uploadDate) {
+        this.uploadDate = uploadDate;
+    }
 }

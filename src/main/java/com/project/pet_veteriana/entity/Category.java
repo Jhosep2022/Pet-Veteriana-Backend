@@ -1,17 +1,12 @@
 package com.project.pet_veteriana.entity;
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "Category")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,7 +22,36 @@ public class Category implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    // Relación con Products
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Products> products;
+    public Category() {
+    }
+
+    public Category(Integer categoryId, String nameCategory, LocalDateTime createdAt) {
+        this.categoryId = categoryId;
+        this.nameCategory = nameCategory;
+        this.createdAt = createdAt;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getNameCategory() {
+        return nameCategory;
+    }
+
+    public void setNameCategory(String nameCategory) {
+        this.nameCategory = nameCategory;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

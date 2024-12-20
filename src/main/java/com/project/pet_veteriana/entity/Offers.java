@@ -4,16 +4,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "Offers")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+
 public class Offers implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -32,8 +28,8 @@ public class Offers implements Serializable {
     @Column(name = "discount_type", nullable = false, length = 50)
     private String discountType;
 
-    @Column(name = "discount_value", nullable = false, precision = 5, scale = 2)
-    private BigDecimal discountValue;
+    @Column(name = "discount_value", nullable = false, precision = 10)
+    private Double discountValue;  // Manteniendo como Double y sin scale
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
@@ -44,9 +40,81 @@ public class Offers implements Serializable {
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
 
-    @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<OffersServices> offersServices;
+    public Offers() {
+    }
 
-    @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<OffersProducts> offersProducts;
+    public Offers(Integer offerId, String name, String description, String discountType, Double discountValue, Boolean isActive, LocalDateTime startDate, LocalDateTime endDate) {
+        this.offerId = offerId;
+        this.name = name;
+        this.description = description;
+        this.discountType = discountType;
+        this.discountValue = discountValue;
+        this.isActive = isActive;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public Integer getOfferId() {
+        return offerId;
+    }
+
+    public void setOfferId(Integer offerId) {
+        this.offerId = offerId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDiscountType() {
+        return discountType;
+    }
+
+    public void setDiscountType(String discountType) {
+        this.discountType = discountType;
+    }
+
+    public Double getDiscountValue() {
+        return discountValue;
+    }
+
+    public void setDiscountValue(Double discountValue) {
+        this.discountValue = discountValue;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
 }
