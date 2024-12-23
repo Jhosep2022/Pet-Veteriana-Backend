@@ -1,6 +1,5 @@
 package com.project.pet_veteriana.dto;
 
-import lombok.*;
 import java.time.LocalDateTime;
 
 public class ProvidersDto {
@@ -9,19 +8,17 @@ public class ProvidersDto {
     private Integer userId;
     private Double rating;
     private LocalDateTime createdAt;
-    private Integer status;
-    private Integer imageId;  // Se añade el campo para la imagen
+    private Boolean status;  // El status es de tipo Boolean
 
     public ProvidersDto() {
     }
 
-    public ProvidersDto(Integer providerId, Integer userId, Double rating, LocalDateTime createdAt, Integer status, Integer imageId) {
+    public ProvidersDto(Integer providerId, Integer userId, Double rating, LocalDateTime createdAt, Boolean status) {
         this.providerId = providerId;
         this.userId = userId;
         this.rating = rating;
         this.createdAt = createdAt;
         this.status = status;
-        this.imageId = imageId;  // Inicializamos el campo imageId
     }
 
     public Integer getProviderId() {
@@ -56,19 +53,11 @@ public class ProvidersDto {
         this.createdAt = createdAt;
     }
 
-    public Integer getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Boolean status) {
         this.status = status;
-    }
-
-    public Integer getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(Integer imageId) {
-        this.imageId = imageId;
     }
 }

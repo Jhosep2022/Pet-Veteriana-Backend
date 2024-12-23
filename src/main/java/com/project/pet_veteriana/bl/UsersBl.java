@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.web.multipart.MultipartFile;
+import org.mindrot.jbcrypt.BCrypt;
+
 
 @Service
 public class UsersBl {
@@ -25,11 +27,14 @@ public class UsersBl {
     @Autowired
     private RolRepository rolRepository;
 
-    // Crear un nuevo usuario con imagen
+    //
     public UsersDto createUserWithImage(UsersDto usersDto, MultipartFile file) throws Exception {
         // Obtener el rol correspondiente usando el rolId
         Rol rol = rolRepository.findById(usersDto.getRolId())
                 .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        // Encriptar la contraseña antes de guardarla
+        String encryptedPassword = BCrypt.hashpw(usersDto.getPassword(), BCrypt.gensalt());
 
         // Subir la imagen a MinIO y guardar en la base de datos
         ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
@@ -39,7 +44,7 @@ public class UsersBl {
         user.setName(usersDto.getName());
         user.setEmail(usersDto.getEmail());
         user.setPhoneNumber(usersDto.getPhoneNumber());
-        user.setPassword(usersDto.getPassword()); // Encriptar si es necesario
+        user.setPassword(encryptedPassword); // Guardar la contraseña encriptada
         user.setLocation(usersDto.getLocation());
         user.setPreferredLanguage(usersDto.getPreferredLanguage());
         user.setStatus(usersDto.getStatus());
@@ -49,6 +54,7 @@ public class UsersBl {
         Users savedUser = usersRepository.save(user);
         return mapToDto(savedUser);
     }
+
 
     // Obtener todos los usuarios
     public List<UsersDto> getAllUsers() {
@@ -109,6 +115,24 @@ public class UsersBl {
         }
         return false;
     }
+
+    public void changePassword(String email, String oldPassword, String newPassword) {
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Verificar si la contraseña antigua es correcta
+        if (!BCrypt.checkpw(oldPassword, user.getPassword())) {
+            throw new RuntimeException("Old password is incorrect");
+        }
+
+        // Encriptar la nueva contraseña
+        String encryptedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
+        // Actualizar la contraseña
+        user.setPassword(encryptedNewPassword);  // Aquí se guarda la nueva contraseña encriptada
+        usersRepository.save(user);
+    }
+
 
     // Mapeo de Users a UsersDto
     private UsersDto mapToDto(Users user) {

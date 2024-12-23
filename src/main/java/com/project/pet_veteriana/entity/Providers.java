@@ -28,25 +28,20 @@ public class Providers implements Serializable {
     private LocalDateTime createdAt;
 
     @Column(name = "status", nullable = false)
-    private Integer status;
+    private Boolean status;
 
-    @ManyToOne(fetch = FetchType.LAZY)  // Relación con ImageS3
-    @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
-    private ImageS3 image;
 
     public Providers() {
     }
 
-    public Providers(Integer providerId, Users user, Double rating, LocalDateTime createdAt, Integer status, ImageS3 image) {
+    public Providers(Integer providerId, Users user, Double rating, LocalDateTime createdAt, boolean status) {
         this.providerId = providerId;
         this.user = user;
         this.rating = rating;
         this.createdAt = createdAt;
         this.status = status;
-        this.image = image;  // Relacionamos con la imagen
     }
 
-    // Getters y Setters
     public Integer getProviderId() {
         return providerId;
     }
@@ -79,19 +74,11 @@ public class Providers implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Integer getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(Boolean status) {
         this.status = status;
-    }
-
-    public ImageS3 getImage() {
-        return image;
-    }
-
-    public void setImage(ImageS3 image) {
-        this.image = image;
     }
 }

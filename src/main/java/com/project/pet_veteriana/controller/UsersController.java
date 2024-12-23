@@ -2,6 +2,8 @@ package com.project.pet_veteriana.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.pet_veteriana.bl.UsersBl;
+import com.project.pet_veteriana.config.JwtTokenProvider;
+import com.project.pet_veteriana.dto.ChangePasswordDto;
 import com.project.pet_veteriana.dto.ResponseDto;
 import com.project.pet_veteriana.dto.UsersDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,10 @@ public class UsersController {
 
     @Autowired
     private UsersBl usersBl;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
 
     @PostMapping
     public ResponseEntity<ResponseDto<UsersDto>> createUserWithImage(
@@ -111,4 +117,26 @@ public class UsersController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<ResponseDto<String>> changePassword(@RequestHeader("Authorization") String token,
+                                                              @RequestBody ChangePasswordDto changePasswordDto) {
+        logger.info("Attempting to change password for user with token: {}", token);
+        try {
+            // Extraer el email del token JWT
+            String email = jwtTokenProvider.extractUsername(token.substring(7));
+            // Registrar el intento de cambio de contraseña
+            logger.info("Changing password for user with email: {}", email);
+            // Cambiar la contraseña
+            usersBl.changePassword(email, changePasswordDto.getOldPassword(), changePasswordDto.getNewPassword());
+            // Registrar éxito
+            logger.info("Password successfully changed for user with email: {}", email);
+            return new ResponseEntity<>(ResponseDto.success("Password changed successfully", "Password changed successfully"), HttpStatus.OK);
+        } catch (Exception e) {
+            // Registrar error
+            logger.error("Failed to change password for user with email: {}. Error: {}", token, e.getMessage());
+            return new ResponseEntity<>(ResponseDto.error("Failed to change password", HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

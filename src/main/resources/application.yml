@@ -18,27 +18,33 @@ spring:
       hibernate:
         format_sql: true
         use_sql_comments: true
-    mail:
-      host: smtp.gmail.com
-      port: 587
-      username: asapsitterapp@gmail.com
-      password: ureeixyewmaiumra
-      properties:
-        mail:
-          smtp:
-            auth: true
-            starttls:
-              enable: true
-              required: true
-            ssl:
-              trust: smtp.gmail.com
-    servlet:
-      multipart:
-        max-file-size: 1GB
-        max-request-size: 1GB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: asapsitterapp@gmail.com
+    password: ureeixyewmaiumra
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: smtp.gmail.com
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
 
 minio:
   url: http://localhost:9000
   access-key: minio
   secret-key: minio1234
   bucket-name: aaasdfv
+
+jwt:
+  secret: "5b02bb72ff0fb7d8b31e78b8097f557b50cf4f0899e49709d82063f3bbdcf23c35f8c7b88b093f3f16e1dbfb30116e47bd5d5e3f21ae77a5f56ee0fe8e8cf7a9"
+  expiration: 86400000
+  header: Authorization
+  prefix: Bearer
