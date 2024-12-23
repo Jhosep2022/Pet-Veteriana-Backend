@@ -58,6 +58,7 @@ public class Users implements Serializable {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.lastLogin = LocalDateTime.now();
     }
 
     public Users() {

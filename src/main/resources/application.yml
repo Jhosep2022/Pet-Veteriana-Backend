@@ -36,8 +36,9 @@ spring:
       multipart:
         max-file-size: 1GB
         max-request-size: 1GB
-  minio:
-    url: http://localhost:9000
-    access-key: minio
-    secret-key: minio1234
-    bucket-name: fotoperfil
+
+minio:
+  url: http://localhost:9000
+  access-key: minio
+  secret-key: minio1234
+  bucket-name: aaasdfv

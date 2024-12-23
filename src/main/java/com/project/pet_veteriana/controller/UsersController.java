@@ -1,5 +1,6 @@
 package com.project.pet_veteriana.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.pet_veteriana.bl.UsersBl;
 import com.project.pet_veteriana.dto.ResponseDto;
 import com.project.pet_veteriana.dto.UsersDto;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,23 +24,29 @@ public class UsersController {
     @Autowired
     private UsersBl usersBl;
 
-    // Crear un nuevo usuario
     @PostMapping
-    public ResponseEntity<ResponseDto<UsersDto>> createUser(@RequestBody UsersDto usersDto) {
-        logger.info("Creating a new user: {}", usersDto.getName());
+    public ResponseEntity<ResponseDto<UsersDto>> createUserWithImage(
+            @RequestParam("user") String userDtoJson,
+            @RequestParam("file") MultipartFile file) throws Exception {
+        logger.info("Creating new user with image");
+
         try {
-            UsersDto createdUser = usersBl.createUser(usersDto);
+            // Convertir el JSON del usuario a UsersDto
+            ObjectMapper objectMapper = new ObjectMapper();
+            UsersDto usersDto = objectMapper.readValue(userDtoJson, UsersDto.class);
+
+            // Crear usuario con imagen
+            UsersDto createdUser = usersBl.createUserWithImage(usersDto, file);
             ResponseDto<UsersDto> response = ResponseDto.success(createdUser, "User created successfully");
-            logger.info("User created successfully: {}", createdUser.getName());
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
-            logger.error("Error creating user: {}", e.getMessage());
+            logger.error("Error creating user: {}", e.getMessage(), e);
             ResponseDto<UsersDto> response = ResponseDto.error("Error creating user", HttpStatus.INTERNAL_SERVER_ERROR.value());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // Obtener todos los usuarios
+
     @GetMapping
     public ResponseEntity<ResponseDto<List<UsersDto>>> getAllUsers() {
         logger.info("Fetching all users");
@@ -47,7 +55,6 @@ public class UsersController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // Obtener un usuario por su ID
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDto<UsersDto>> getUserById(@PathVariable("id") Integer id) {
         logger.info("Fetching user with ID: {}", id);
@@ -62,30 +69,41 @@ public class UsersController {
         }
     }
 
-    // Actualizar un usuario
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDto<UsersDto>> updateUser(@PathVariable("id") Integer id, @RequestBody UsersDto usersDto) {
+    public ResponseEntity<ResponseDto<UsersDto>> updateUserWithImage(
+            @PathVariable("id") Integer id,
+            @RequestParam("user") String userDtoJson,
+            @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
         logger.info("Updating user with ID: {}", id);
-        Optional<UsersDto> updatedUser = usersBl.updateUser(id, usersDto);
-        if (updatedUser.isPresent()) {
-            ResponseDto<UsersDto> response = ResponseDto.success(updatedUser.get(), "User updated successfully");
-            logger.info("User updated successfully: {}", updatedUser.get().getName());
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            logger.warn("User with ID: {} not found for update", id);
-            ResponseDto<UsersDto> response = ResponseDto.error("User not found for update", HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+        try {
+            // Convertir el JSON del usuario a UsersDto
+            ObjectMapper objectMapper = new ObjectMapper();
+            UsersDto usersDto = objectMapper.readValue(userDtoJson, UsersDto.class);
+
+            // Actualizar usuario con imagen
+            Optional<UsersDto> updatedUser = usersBl.updateUserWithImage(id, usersDto, file);
+            if (updatedUser.isPresent()) {
+                ResponseDto<UsersDto> response = ResponseDto.success(updatedUser.get(), "User updated successfully");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                logger.warn("User with ID: {} not found for update", id);
+                ResponseDto<UsersDto> response = ResponseDto.error("User not found for update", HttpStatus.NOT_FOUND.value());
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            logger.error("Error updating user: {}", e.getMessage(), e);
+            ResponseDto<UsersDto> response = ResponseDto.error("Error updating user", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // Eliminar un usuario
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto<Void>> deleteUser(@PathVariable("id") Integer id) {
         logger.info("Deleting user with ID: {}", id);
         boolean deleted = usersBl.deleteUser(id);
         if (deleted) {
             ResponseDto<Void> response = ResponseDto.success(null, "User deleted successfully");
-            logger.info("User with ID: {} deleted successfully", id);
             return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         } else {
             logger.warn("User with ID: {} not found for deletion", id);

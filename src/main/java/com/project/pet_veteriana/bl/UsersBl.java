@@ -1,13 +1,17 @@
 package com.project.pet_veteriana.bl;
 
+import com.project.pet_veteriana.dto.ImageS3Dto;
 import com.project.pet_veteriana.dto.UsersDto;
+import com.project.pet_veteriana.entity.ImageS3;
+import com.project.pet_veteriana.entity.Rol;
 import com.project.pet_veteriana.entity.Users;
+import com.project.pet_veteriana.repository.RolRepository;
 import com.project.pet_veteriana.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UsersBl {
@@ -15,18 +19,32 @@ public class UsersBl {
     @Autowired
     private UsersRepository usersRepository;
 
-    // Crear un nuevo usuario
-    public UsersDto createUser(UsersDto usersDto) {
+    @Autowired
+    private ImagesS3Bl imagesS3Bl; // Servicio para manejar imágenes
+
+    @Autowired
+    private RolRepository rolRepository;
+
+    // Crear un nuevo usuario con imagen
+    public UsersDto createUserWithImage(UsersDto usersDto, MultipartFile file) throws Exception {
+        // Obtener el rol correspondiente usando el rolId
+        Rol rol = rolRepository.findById(usersDto.getRolId())
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+        // Subir la imagen a MinIO y guardar en la base de datos
+        ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
+
+        // Crear un nuevo usuario con el ID de la imagen y el rol asociado
         Users user = new Users();
         user.setName(usersDto.getName());
         user.setEmail(usersDto.getEmail());
         user.setPhoneNumber(usersDto.getPhoneNumber());
-        user.setPassword(usersDto.getPassword()); // Solo en POST
+        user.setPassword(usersDto.getPassword()); // Encriptar si es necesario
         user.setLocation(usersDto.getLocation());
         user.setPreferredLanguage(usersDto.getPreferredLanguage());
-        user.setLastLogin(usersDto.getLastLogin());
         user.setStatus(usersDto.getStatus());
-        // No necesitamos setear createdAt, ya que se gestionará automáticamente en la entidad
+        user.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
+        user.setRol(rol); // Asignar el rol al usuario
 
         Users savedUser = usersRepository.save(user);
         return mapToDto(savedUser);
@@ -46,20 +64,26 @@ public class UsersBl {
         return user.map(this::mapToDto);
     }
 
-    // Actualizar un usuario
-    public Optional<UsersDto> updateUser(Integer userId, UsersDto usersDto) {
+    // Actualizar un usuario con imagen
+    public Optional<UsersDto> updateUserWithImage(Integer userId, UsersDto usersDto, MultipartFile file) throws Exception {
         Optional<Users> existingUser = usersRepository.findById(userId);
         if (existingUser.isPresent()) {
             Users user = existingUser.get();
+
+            // Subir la nueva imagen si se proporciona
+            if (file != null && !file.isEmpty()) {
+                ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
+                user.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
+            }
+
             user.setName(usersDto.getName());
             user.setEmail(usersDto.getEmail());
             user.setPhoneNumber(usersDto.getPhoneNumber());
-            user.setPassword(usersDto.getPassword()); // Solo en PUT si se requiere cambiar la contraseña
+            user.setPassword(usersDto.getPassword()); // Encriptar si es necesario
             user.setLocation(usersDto.getLocation());
             user.setPreferredLanguage(usersDto.getPreferredLanguage());
             user.setLastLogin(usersDto.getLastLogin());
             user.setStatus(usersDto.getStatus());
-            // No es necesario actualizar createdAt, ya que no cambia
 
             Users updatedUser = usersRepository.save(user);
             return Optional.of(mapToDto(updatedUser));
@@ -69,9 +93,18 @@ public class UsersBl {
 
     // Eliminar un usuario
     public boolean deleteUser(Integer userId) {
-        Optional<Users> existingUser = usersRepository.findById(userId);
-        if (existingUser.isPresent()) {
-            usersRepository.delete(existingUser.get());
+        Optional<Users> userOptional = usersRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            Users user = userOptional.get();
+            // Eliminar la imagen asociada, si existe
+            if (user.getImage() != null) {
+                try {
+                    imagesS3Bl.deleteFile(user.getImage().getFileName()); // Asumiendo que existe esta función
+                } catch (Exception e) {
+                    throw new RuntimeException("Error deleting associated image from MinIO", e);
+                }
+            }
+            usersRepository.delete(user);
             return true;
         }
         return false;
@@ -79,19 +112,19 @@ public class UsersBl {
 
     // Mapeo de Users a UsersDto
     private UsersDto mapToDto(Users user) {
-        // No incluimos la contraseña en el DTO cuando se retorna en GET
         return new UsersDto(
                 user.getUserId(),
                 user.getName(),
                 user.getEmail(),
-                null,  // No incluir la contraseña en la respuesta
+                null, // No incluir la contraseña en el DTO
                 user.getPhoneNumber(),
                 user.getLocation(),
                 user.getPreferredLanguage(),
                 user.getLastLogin(),
                 user.getCreatedAt(),
                 user.getStatus(),
-                user.getRol().getRolId(),
-                user.getImage().getImageId());
+                user.getRol() != null ? user.getRol().getRolId() : null,
+                user.getImage() != null ? user.getImage().getImageId() : null
+        );
     }
 }
