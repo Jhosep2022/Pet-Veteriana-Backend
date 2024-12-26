@@ -39,10 +39,15 @@ public class Products implements Serializable {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    // Relación con ImageS3
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
+    private ImageS3 image;
+
     public Products() {
     }
 
-    public Products(Integer productId, Double price, Integer stock, Integer createdAt, Boolean status, Providers provider, Category category) {
+    public Products(Integer productId, Double price, Integer stock, Integer createdAt, Boolean status, Providers provider, Category category, ImageS3 image) {
         this.productId = productId;
         this.price = price;
         this.stock = stock;
@@ -50,6 +55,7 @@ public class Products implements Serializable {
         this.status = status;
         this.provider = provider;
         this.category = category;
+        this.image = image;
     }
 
     public Integer getProductId() {
@@ -106,5 +112,13 @@ public class Products implements Serializable {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public ImageS3 getImage() {
+        return image;
+    }
+
+    public void setImage(ImageS3 image) {
+        this.image = image;
     }
 }

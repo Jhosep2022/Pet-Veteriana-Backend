@@ -37,6 +37,7 @@ public class Reservations implements Serializable {
     public Reservations() {
     }
 
+
     public Reservations(Integer reservationId, Users user, Services service, LocalDateTime date, Boolean status, LocalDateTime createdAt) {
         this.reservationId = reservationId;
         this.user = user;

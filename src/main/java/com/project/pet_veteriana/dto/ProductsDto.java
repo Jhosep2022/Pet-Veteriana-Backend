@@ -11,11 +11,12 @@ public class ProductsDto {
     private Boolean status;
     private Integer providerId;
     private Integer categoryId;
+    private Integer imageId;
 
     public ProductsDto() {
     }
 
-    public ProductsDto(Integer productId, Double price, Integer stock, Integer createdAt, Boolean status, Integer providerId, Integer categoryId) {
+    public ProductsDto(Integer productId, Double price, Integer stock, Integer createdAt, Boolean status, Integer providerId, Integer categoryId, Integer imageId) {
         this.productId = productId;
         this.price = price;
         this.stock = stock;
@@ -23,6 +24,7 @@ public class ProductsDto {
         this.status = status;
         this.providerId = providerId;
         this.categoryId = categoryId;
+        this.imageId = imageId;
     }
 
     public Integer getProductId() {
@@ -79,5 +81,13 @@ public class ProductsDto {
 
     public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public Integer getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(Integer imageId) {
+        this.imageId = imageId;
     }
 }

@@ -8,7 +8,8 @@ public class ProvidersDto {
     private Integer userId;
     private Double rating;
     private LocalDateTime createdAt;
-    private Boolean status;  // El status es de tipo Boolean
+    private Boolean status;
+
 
     public ProvidersDto() {
     }
