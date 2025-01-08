@@ -5,6 +5,8 @@ import lombok.*;
 public class ProductsDto {
 
     private Integer productId;
+    private String name;
+    private String description;
     private Double price;
     private Integer stock;
     private Integer createdAt;
@@ -16,8 +18,10 @@ public class ProductsDto {
     public ProductsDto() {
     }
 
-    public ProductsDto(Integer productId, Double price, Integer stock, Integer createdAt, Boolean status, Integer providerId, Integer categoryId, Integer imageId) {
+    public ProductsDto(Integer productId, String name, String description, Double price, Integer stock, Integer createdAt, Boolean status, Integer providerId, Integer categoryId, Integer imageId) {
         this.productId = productId;
+        this.name = name;
+        this.description = description;
         this.price = price;
         this.stock = stock;
         this.createdAt = createdAt;
@@ -27,12 +31,29 @@ public class ProductsDto {
         this.imageId = imageId;
     }
 
+    // Getters y setters
     public Integer getProductId() {
         return productId;
     }
 
     public void setProductId(Integer productId) {
         this.productId = productId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Double getPrice() {
@@ -91,3 +112,4 @@ public class ProductsDto {
         this.imageId = imageId;
     }
 }
+

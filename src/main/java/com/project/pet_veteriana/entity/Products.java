@@ -1,10 +1,6 @@
 package com.project.pet_veteriana.entity;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.io.Serializable;
-import java.math.BigDecimal;
-
 
 @Entity
 @Table(name = "Products")
@@ -16,6 +12,12 @@ public class Products implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id", nullable = false)
     private Integer productId;
+
+    @Column(name = "name", nullable = false, length = 100)
+    private String name;
+
+    @Column(name = "description", nullable = false, length = 500)
+    private String description;
 
     @Column(name = "price", nullable = false, precision = 10)
     private Double price;
@@ -44,26 +46,29 @@ public class Products implements Serializable {
     @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
     private ImageS3 image;
 
-    public Products() {
-    }
-
-    public Products(Integer productId, Double price, Integer stock, Integer createdAt, Boolean status, Providers provider, Category category, ImageS3 image) {
-        this.productId = productId;
-        this.price = price;
-        this.stock = stock;
-        this.createdAt = createdAt;
-        this.status = status;
-        this.provider = provider;
-        this.category = category;
-        this.image = image;
-    }
-
+    // Getters y setters
     public Integer getProductId() {
         return productId;
     }
 
     public void setProductId(Integer productId) {
         this.productId = productId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Double getPrice() {

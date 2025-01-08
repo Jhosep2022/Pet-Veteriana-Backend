@@ -46,6 +46,8 @@ public class ProductsBl {
 
         // Crear objeto producto
         Products product = new Products();
+        product.setName(productsDto.getName());
+        product.setDescription(productsDto.getDescription());
         product.setPrice(productsDto.getPrice());
         product.setStock(productsDto.getStock());
         product.setCreatedAt(productsDto.getCreatedAt());
@@ -85,6 +87,8 @@ public class ProductsBl {
             product.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
         }
 
+        product.setName(productsDto.getName());
+        product.setDescription(productsDto.getDescription());
         product.setPrice(productsDto.getPrice());
         product.setStock(productsDto.getStock());
         product.setCreatedAt(productsDto.getCreatedAt());
@@ -116,6 +120,8 @@ public class ProductsBl {
     private ProductsDto convertToDto(Products product) {
         return new ProductsDto(
                 product.getProductId(),
+                product.getName(),
+                product.getDescription(),
                 product.getPrice(),
                 product.getStock(),
                 product.getCreatedAt(),

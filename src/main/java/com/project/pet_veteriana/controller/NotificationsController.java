@@ -1,6 +1,7 @@
 package com.project.pet_veteriana.controller;
 
 import com.project.pet_veteriana.bl.NotificacionsBl;
+import com.project.pet_veteriana.dto.MassiveNotificationRequestDto;
 import com.project.pet_veteriana.dto.NotificationsDto;
 import com.project.pet_veteriana.dto.ResponseDto;
 import com.project.pet_veteriana.config.JwtTokenProvider;
@@ -127,4 +128,27 @@ public class NotificationsController {
         logger.info("Deleted notification with ID: {}", id);
         return ResponseDto.success("Deleted", "Notification deleted successfully");
     }
+
+    // Enviar notificaciones masivas
+    @PostMapping("/send-massive")
+    public ResponseDto<String> sendMassiveNotifications(@RequestHeader("Authorization") String token,
+                                                        @RequestBody MassiveNotificationRequestDto request) {
+        logger.info("Received request to send massive notifications with token: {}", token);
+
+        // Validar el token JWT antes de proceder
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt with token: {}", token);
+            return ResponseDto.error("Unauthorized", 401);
+        }
+
+        notificacionsBl.sendMassiveNotifications(request);
+        logger.info("Massive notifications sent successfully to user IDs: {}", request.getUserIds());
+        return ResponseDto.success("Notifications sent successfully", "Massive notifications sent successfully");
+    }
+
+
+
 }

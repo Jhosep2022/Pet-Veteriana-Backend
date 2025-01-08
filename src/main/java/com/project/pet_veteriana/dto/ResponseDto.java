@@ -17,6 +17,7 @@ public class ResponseDto<T> {
         this.status = status;
         this.data = data;
         this.code = code;
+        
     }
 
     // Getter y Setter para message

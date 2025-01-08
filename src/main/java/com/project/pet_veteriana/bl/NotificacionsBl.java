@@ -1,5 +1,6 @@
 package com.project.pet_veteriana.bl;
 
+import com.project.pet_veteriana.dto.MassiveNotificationRequestDto;
 import com.project.pet_veteriana.dto.NotificationsDto;
 import com.project.pet_veteriana.entity.Notifications;
 import com.project.pet_veteriana.entity.Users;
@@ -112,4 +113,26 @@ public class NotificacionsBl {
     public void deleteNotification(Integer id) {
         notificationsRepository.deleteById(id);
     }
+
+    // Enviar notificaciones masivas
+    public void sendMassiveNotifications(MassiveNotificationRequestDto request) {
+        List<Notifications> notifications = request.getUserIds().stream().map(userId -> {
+            Optional<Users> userOptional = userRepository.findById(userId);
+            if (userOptional.isEmpty()) {
+                throw new RuntimeException("User not found with ID: " + userId);
+            }
+
+            Notifications notification = new Notifications();
+            notification.setMessage(request.getMessage());
+            notification.setNotificationType(request.getNotificationType());
+            notification.setRead(false);
+            notification.setCreatedAt(LocalDateTime.now());
+            notification.setUser(userOptional.get());
+            return notification;
+        }).collect(Collectors.toList());
+
+        notificationsRepository.saveAll(notifications);
+    }
+
+
 }
