@@ -17,17 +17,16 @@ public class CategoryBl {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    // Crear una nueva categoría
     public CategoryDto createCategory(CategoryDto categoryDto) {
         Category category = new Category();
         category.setNameCategory(categoryDto.getNameCategory());
         category.setCreatedAt(LocalDateTime.now());
+        category.setIcono(categoryDto.getIcono()); // Setear el icono
 
         Category savedCategory = categoryRepository.save(category);
         return convertToDto(savedCategory);
     }
 
-    // Obtener todas las categorías
     public List<CategoryDto> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
@@ -35,19 +34,18 @@ public class CategoryBl {
                 .collect(Collectors.toList());
     }
 
-    // Obtener categoría por ID
     public CategoryDto getCategoryById(Integer id) {
         Optional<Category> category = categoryRepository.findById(id);
         return category.map(this::convertToDto).orElse(null);
     }
 
-    // Actualizar categoría
     public CategoryDto updateCategory(Integer id, CategoryDto categoryDto) {
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if (categoryOptional.isPresent()) {
             Category category = categoryOptional.get();
             category.setNameCategory(categoryDto.getNameCategory());
             category.setCreatedAt(LocalDateTime.now());
+            category.setIcono(categoryDto.getIcono()); // Actualizar el icono
 
             Category updatedCategory = categoryRepository.save(category);
             return convertToDto(updatedCategory);
@@ -55,7 +53,6 @@ public class CategoryBl {
         return null;
     }
 
-    // Eliminar categoría
     public boolean deleteCategory(Integer id) {
         if (categoryRepository.existsById(id)) {
             categoryRepository.deleteById(id);
@@ -64,11 +61,12 @@ public class CategoryBl {
         return false;
     }
 
-    // Convertir Category a CategoryDto
     private CategoryDto convertToDto(Category category) {
         return new CategoryDto(
                 category.getCategoryId(),
                 category.getNameCategory(),
-                category.getCreatedAt());
+                category.getCreatedAt(),
+                category.getIcono() // Convertir el icono
+        );
     }
 }

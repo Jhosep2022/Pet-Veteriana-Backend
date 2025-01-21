@@ -7,14 +7,16 @@ public class CategoryDto {
     private Integer categoryId;
     private String nameCategory;
     private LocalDateTime createdAt;
+    private String icono; // Nuevo atributo
 
     public CategoryDto() {
     }
 
-    public CategoryDto(Integer categoryId, String nameCategory, LocalDateTime createdAt) {
+    public CategoryDto(Integer categoryId, String nameCategory, LocalDateTime createdAt, String icono) {
         this.categoryId = categoryId;
         this.nameCategory = nameCategory;
         this.createdAt = createdAt;
+        this.icono = icono;
     }
 
     public Integer getCategoryId() {
@@ -39,5 +41,13 @@ public class CategoryDto {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getIcono() {
+        return icono;
+    }
+
+    public void setIcono(String icono) {
+        this.icono = icono;
     }
 }

@@ -1,12 +1,11 @@
 package com.project.pet_veteriana.entity;
-import jakarta.persistence.*;
 
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Category")
-
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -22,13 +21,17 @@ public class Category implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "icono", nullable = true, length = 255) // Nueva columna para icono
+    private String icono;
+
     public Category() {
     }
 
-    public Category(Integer categoryId, String nameCategory, LocalDateTime createdAt) {
+    public Category(Integer categoryId, String nameCategory, LocalDateTime createdAt, String icono) {
         this.categoryId = categoryId;
         this.nameCategory = nameCategory;
         this.createdAt = createdAt;
+        this.icono = icono;
     }
 
     public Integer getCategoryId() {
@@ -53,5 +56,13 @@ public class Category implements Serializable {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getIcono() {
+        return icono;
+    }
+
+    public void setIcono(String icono) {
+        this.icono = icono;
     }
 }
