@@ -20,15 +20,17 @@ public class JwtTokenProvider {
     // Generar el token con los datos de usuario
     public String generateToken(UsersDto usuarioDto) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userid", usuarioDto.getUserId());
         claims.put("rolId", usuarioDto.getRolId());
-        claims.put("idUsuario", usuarioDto.getUserId());
         claims.put("correo", usuarioDto.getEmail());
+        claims.put("nombre", usuarioDto.getName());
+        claims.put("idioma", usuarioDto.getPreferredLanguage());
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(usuarioDto.getEmail())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas de expiración
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(secretKey)
                 .compact();
     }

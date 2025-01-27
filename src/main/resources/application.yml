@@ -21,17 +21,15 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: asapsitterapp@gmail.com
-    password: ureeixyewmaiumra
+    username: jose74080986@gmail.com
+    password: ckpl nico lblw mvzw
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-            required: true
-          ssl:
-            trust: smtp.gmail.com
+          ssl.trust: smtp.gmail.com
   servlet:
     multipart:
       max-file-size: 1GB
@@ -48,3 +46,8 @@ jwt:
   expiration: 86400000
   header: Authorization
   prefix: Bearer
+
+logging:
+  level:
+    org.springframework.mail: DEBUG
+    jakarta.mail: DEBUG

@@ -1,35 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.project</groupId>
 	<artifactId>pet-veteriana</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>pet-veteriana</name>
 	<description>Demo project for Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+
 	<dependencies>
+		<!-- Spring Boot Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -38,37 +28,32 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>1.18.24</version>
-			<scope>compile</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 
+		<!-- PostgreSQL -->
 		<dependency>
-			<groupId>io.minio</groupId>
-			<artifactId>minio</artifactId>
-			<version>8.3.5</version>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Lombok -->
 		<dependency>
-			<groupId>org.mindrot</groupId>
-			<artifactId>jbcrypt</artifactId>
-			<version>0.4</version>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.24</version>
+			<scope>provided</scope>
 		</dependency>
 
+		<!-- JWT -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
@@ -87,56 +72,43 @@
 			<scope>runtime</scope>
 		</dependency>
 
-
+		<!-- MinIO -->
 		<dependency>
-	  <groupId>org.eclipse.persistence</groupId>
-	  <artifactId>org.eclipse.persistence.core</artifactId>
-	  <version>2.7.9</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>org.eclipse.persistence</groupId>
-	  <artifactId>org.eclipse.persistence.asm</artifactId>
-	  <version>9.1.0</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>org.eclipse.persistence</groupId>
-	  <artifactId>org.eclipse.persistence.antlr</artifactId>
-	  <version>2.7.9</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>org.eclipse.persistence</groupId>
-	  <artifactId>org.eclipse.persistence.jpa</artifactId>
-	  <version>2.7.9</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>org.eclipse.persistence</groupId>
-	  <artifactId>org.eclipse.persistence.jpa.jpql</artifactId>
-	  <version>2.7.9</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>org.eclipse.persistence</groupId>
-	  <artifactId>org.eclipse.persistence.moxy</artifactId>
-	  <version>2.7.9</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>org.eclipse.persistence</groupId>
-	  <artifactId>javax.persistence</artifactId>
-	  <version>2.2.1</version>
-	 </dependency>
-	 <dependency>
-	  <groupId>org.eclipse.persistence</groupId>
-	  <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
-	  <version>2.7.9</version>
-	  <scope>provided</scope>
-	 </dependency>
+			<groupId>io.minio</groupId>
+			<artifactId>minio</artifactId>
+			<version>8.3.5</version>
+		</dependency>
+
+		<!-- BCrypt -->
+		<dependency>
+			<groupId>org.mindrot</groupId>
+			<artifactId>jbcrypt</artifactId>
+			<version>0.4</version>
+		</dependency>
+
+		<!-- EclipseLink (if needed for custom JPA implementation) -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.core</artifactId>
+			<version>2.7.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>org.eclipse.persistence.jpa</artifactId>
+			<version>2.7.9</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+			<!-- Maven Compiler Plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
 				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
@@ -145,6 +117,8 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+
+			<!-- Spring Boot Maven Plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -159,5 +133,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

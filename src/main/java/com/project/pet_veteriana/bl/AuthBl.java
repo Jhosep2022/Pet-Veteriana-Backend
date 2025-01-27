@@ -28,9 +28,16 @@ public class AuthBl {
             throw new RuntimeException("Invalid credentials");
         }
 
-        // Generar un JWT token
+        // Crear un objeto UsersDto con todos los datos necesarios
         UsersDto userDto = new UsersDto();
+        userDto.setUserId(user.getUserId()); // Asumiendo que este es el campo en tu entidad Users
+        userDto.setRolId(user.getRol().getRolId());     // Asumiendo que tienes un campo rolId en tu entidad Users
         userDto.setEmail(user.getEmail());
+        userDto.setName(user.getName());       // Asumiendo que tienes un campo name
+        userDto.setPreferredLanguage(user.getPreferredLanguage()); // Asumiendo que tienes este campo
+
+        // Generar el token con todos los datos
         return jwtTokenProvider.generateToken(userDto);
     }
+
 }
