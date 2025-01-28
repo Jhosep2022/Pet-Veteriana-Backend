@@ -1,7 +1,5 @@
 package com.project.pet_veteriana.dto;
 
-import lombok.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -16,11 +14,12 @@ public class ServicesDto {
     private Boolean status;
     private Integer providerId;
     private Integer imageId;
+    private String imageUrl; // Nuevo campo para el enlace de la imagen
 
     public ServicesDto() {
     }
 
-    public ServicesDto(Integer serviceId, String serviceName, Double price, Integer duration, String description, LocalDateTime createdAt, Boolean status, Integer providerId, Integer imageId) {
+    public ServicesDto(Integer serviceId, String serviceName, Double price, Integer duration, String description, LocalDateTime createdAt, Boolean status, Integer providerId, Integer imageId, String imageUrl) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.price = price;
@@ -30,8 +29,10 @@ public class ServicesDto {
         this.status = status;
         this.providerId = providerId;
         this.imageId = imageId;
+        this.imageUrl = imageUrl; // Asignar el enlace de la imagen
     }
 
+    // Getters y Setters
     public Integer getServiceId() {
         return serviceId;
     }
@@ -102,5 +103,13 @@ public class ServicesDto {
 
     public void setImageId(Integer imageId) {
         this.imageId = imageId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

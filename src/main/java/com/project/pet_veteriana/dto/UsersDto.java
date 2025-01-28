@@ -16,17 +16,18 @@ public class UsersDto {
     private Boolean status;
     private Integer rolId;
     private Integer imageId;
+    private String imageUrl;
 
     // Constructor por defecto
     public UsersDto() {
     }
 
     // Constructor con parámetros
-    public UsersDto(Integer userId, String name, String email, String password, String phoneNumber, String location, String preferredLanguage, LocalDateTime lastLogin, LocalDateTime createdAt, Boolean status, Integer rolId, Integer imageId) {
+    public UsersDto(Integer userId, String name, String email, String password, String phoneNumber, String location, String preferredLanguage, LocalDateTime lastLogin, LocalDateTime createdAt, Boolean status, Integer rolId, Integer imageId, String imageUrl) {
         this.userId = userId;
         this.name = name;
         this.email = email;
-        this.password = (password != null) ? password : "";  // Inicializado en el constructor
+        this.password = (password != null) ? password : "";
         this.phoneNumber = phoneNumber;
         this.location = location;
         this.preferredLanguage = preferredLanguage;
@@ -35,6 +36,7 @@ public class UsersDto {
         this.status = status;
         this.rolId = rolId;
         this.imageId = imageId;
+        this.imageUrl = imageUrl;
     }
 
     // Getters y Setters
@@ -63,11 +65,11 @@ public class UsersDto {
     }
 
     public String getPassword() {
-        return password;  // Getter para la contraseña
+        return password; // Getter para la contraseña
     }
 
     public void setPassword(String password) {
-        this.password = password;  // Setter para la contraseña
+        this.password = password; // Setter para la contraseña
     }
 
     public String getPhoneNumber() {
@@ -132,5 +134,13 @@ public class UsersDto {
 
     public void setImageId(Integer imageId) {
         this.imageId = imageId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

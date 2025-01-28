@@ -62,7 +62,7 @@ public class ImagesS3Bl {
     }
 
     // Método para generar el enlace del archivo subido
-    private String generateFileUrl(String filename) {
+    public String generateFileUrl(String filename) {
         try {
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()

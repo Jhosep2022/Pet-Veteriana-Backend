@@ -1,7 +1,5 @@
 package com.project.pet_veteriana.dto;
 
-import lombok.*;
-
 public class ProductsDto {
 
     private Integer productId;
@@ -14,11 +12,12 @@ public class ProductsDto {
     private Integer providerId;
     private Integer categoryId;
     private Integer imageId;
+    private String imageUrl; // Nuevo campo para el enlace de la imagen
 
     public ProductsDto() {
     }
 
-    public ProductsDto(Integer productId, String name, String description, Double price, Integer stock, Integer createdAt, Boolean status, Integer providerId, Integer categoryId, Integer imageId) {
+    public ProductsDto(Integer productId, String name, String description, Double price, Integer stock, Integer createdAt, Boolean status, Integer providerId, Integer categoryId, Integer imageId, String imageUrl) {
         this.productId = productId;
         this.name = name;
         this.description = description;
@@ -29,9 +28,10 @@ public class ProductsDto {
         this.providerId = providerId;
         this.categoryId = categoryId;
         this.imageId = imageId;
+        this.imageUrl = imageUrl; // Asignar el enlace de la imagen
     }
 
-    // Getters y setters
+    // Getters y Setters
     public Integer getProductId() {
         return productId;
     }
@@ -111,5 +111,12 @@ public class ProductsDto {
     public void setImageId(Integer imageId) {
         this.imageId = imageId;
     }
-}
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+}

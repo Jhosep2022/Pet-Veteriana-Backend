@@ -14,7 +14,6 @@ import java.util.Optional;
 import org.springframework.web.multipart.MultipartFile;
 import org.mindrot.jbcrypt.BCrypt;
 
-
 @Service
 public class UsersBl {
 
@@ -22,12 +21,12 @@ public class UsersBl {
     private UsersRepository usersRepository;
 
     @Autowired
-    private ImagesS3Bl imagesS3Bl; // Servicio para manejar imágenes
+    private ImagesS3Bl imagesS3Bl;
 
     @Autowired
     private RolRepository rolRepository;
 
-    //
+    // Crear usuario con imagen
     public UsersDto createUserWithImage(UsersDto usersDto, MultipartFile file) throws Exception {
         // Obtener el rol correspondiente usando el rolId
         Rol rol = rolRepository.findById(usersDto.getRolId())
@@ -54,7 +53,6 @@ public class UsersBl {
         Users savedUser = usersRepository.save(user);
         return mapToDto(savedUser);
     }
-
 
     // Obtener todos los usuarios
     public List<UsersDto> getAllUsers() {
@@ -116,6 +114,7 @@ public class UsersBl {
         return false;
     }
 
+    // Cambiar contraseña
     public void changePassword(String email, String oldPassword, String newPassword) {
         Users user = usersRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -133,14 +132,19 @@ public class UsersBl {
         usersRepository.save(user);
     }
 
-
     // Mapeo de Users a UsersDto
     private UsersDto mapToDto(Users user) {
+        String imageUrl = null;
+        if (user.getImage() != null) {
+            // Generar el enlace de la imagen desde MinIO
+            imageUrl = imagesS3Bl.generateFileUrl(user.getImage().getFileName());
+        }
+
         return new UsersDto(
                 user.getUserId(),
                 user.getName(),
                 user.getEmail(),
-                null, // No incluir la contraseña en el DTO
+                null,
                 user.getPhoneNumber(),
                 user.getLocation(),
                 user.getPreferredLanguage(),
@@ -148,7 +152,8 @@ public class UsersBl {
                 user.getCreatedAt(),
                 user.getStatus(),
                 user.getRol() != null ? user.getRol().getRolId() : null,
-                user.getImage() != null ? user.getImage().getImageId() : null
+                user.getImage() != null ? user.getImage().getImageId() : null,
+                imageUrl
         );
     }
 }

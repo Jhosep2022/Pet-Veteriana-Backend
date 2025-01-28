@@ -110,6 +110,11 @@ public class ServicesBl {
 
     // Mapear entidad a DTO
     private ServicesDto mapToDto(Services service) {
+        String imageUrl = null;
+        if (service.getImage() != null) {
+            imageUrl = imagesS3Bl.generateFileUrl(service.getImage().getFileName());
+        }
+
         return new ServicesDto(
                 service.getServiceId(),
                 service.getServiceName(),
@@ -119,7 +124,8 @@ public class ServicesBl {
                 service.getCreatedAt(),
                 service.getStatus(),
                 service.getProvider().getProviderId(),
-                service.getImage() != null ? service.getImage().getImageId() : null
+                service.getImage() != null ? service.getImage().getImageId() : null,
+                imageUrl
         );
     }
 }

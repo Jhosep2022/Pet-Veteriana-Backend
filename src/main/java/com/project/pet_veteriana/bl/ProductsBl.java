@@ -118,6 +118,11 @@ public class ProductsBl {
 
     // Convertir entidad a DTO
     private ProductsDto convertToDto(Products product) {
+        String imageUrl = null;
+        if (product.getImage() != null) {
+            imageUrl = imagesS3Bl.generateFileUrl(product.getImage().getFileName());
+        }
+
         return new ProductsDto(
                 product.getProductId(),
                 product.getName(),
@@ -128,7 +133,8 @@ public class ProductsBl {
                 product.getStatus(),
                 product.getProvider().getProviderId(),
                 product.getCategory().getCategoryId(),
-                product.getImage() != null ? product.getImage().getImageId() : null
+                product.getImage() != null ? product.getImage().getImageId() : null,
+                imageUrl
         );
     }
 }

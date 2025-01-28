@@ -116,6 +116,12 @@ public class PetsBl {
 
     // Convertir entidad a DTO
     private PetsDto convertToDto(Pets pet) {
+        String imageUrl = null;
+        if (pet.getImage() != null) {
+            // Generar el enlace de la imagen desde MinIO
+            imageUrl = imagesS3Bl.generateFileUrl(pet.getImage().getFileName());
+        }
+
         return new PetsDto(
                 pet.getPetId(),
                 pet.getPetName(),
@@ -128,7 +134,9 @@ public class PetsBl {
                 pet.getAllergies(),
                 pet.getBehaviorNotes(),
                 pet.getUser().getUserId(),
-                pet.getImage() != null ? pet.getImage().getImageId() : null
+                pet.getImage() != null ? pet.getImage().getImageId() : null,
+                imageUrl
         );
     }
+
 }

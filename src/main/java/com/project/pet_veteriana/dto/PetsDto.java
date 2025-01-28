@@ -1,7 +1,5 @@
 package com.project.pet_veteriana.dto;
 
-import lombok.*;
-
 import java.time.LocalDateTime;
 
 public class PetsDto {
@@ -18,11 +16,12 @@ public class PetsDto {
     private String behaviorNotes;
     private Integer userId;
     private Integer imageId;
+    private String imageUrl; // Nuevo campo para el enlace de la imagen
 
     public PetsDto() {
     }
 
-    public PetsDto(Integer petId, String petName, String petBreed, String petAge, LocalDateTime createdAt, Double weight, Double height, String gender, String allergies, String behaviorNotes, Integer userId, Integer imageId) {
+    public PetsDto(Integer petId, String petName, String petBreed, String petAge, LocalDateTime createdAt, Double weight, Double height, String gender, String allergies, String behaviorNotes, Integer userId, Integer imageId, String imageUrl) {
         this.petId = petId;
         this.petName = petName;
         this.petBreed = petBreed;
@@ -35,8 +34,10 @@ public class PetsDto {
         this.behaviorNotes = behaviorNotes;
         this.userId = userId;
         this.imageId = imageId;
+        this.imageUrl = imageUrl; // Asignar el enlace de la imagen
     }
 
+    // Getters y Setters
     public Integer getPetId() {
         return petId;
     }
@@ -131,5 +132,13 @@ public class PetsDto {
 
     public void setImageId(Integer imageId) {
         this.imageId = imageId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
