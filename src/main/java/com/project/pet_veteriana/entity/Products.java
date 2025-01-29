@@ -1,6 +1,7 @@
 package com.project.pet_veteriana.entity;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Products")
@@ -26,7 +27,7 @@ public class Products implements Serializable {
     private Integer stock;
 
     @Column(name = "created_at", nullable = false)
-    private Integer createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "status", nullable = false)
     private Boolean status;
@@ -46,7 +47,6 @@ public class Products implements Serializable {
     @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
     private ImageS3 image;
 
-    // Getters y setters
     public Integer getProductId() {
         return productId;
     }
@@ -87,11 +87,11 @@ public class Products implements Serializable {
         this.stock = stock;
     }
 
-    public Integer getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Integer createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

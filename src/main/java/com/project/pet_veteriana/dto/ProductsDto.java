@@ -1,5 +1,7 @@
 package com.project.pet_veteriana.dto;
 
+import java.time.LocalDateTime;
+
 public class ProductsDto {
 
     private Integer productId;
@@ -7,7 +9,7 @@ public class ProductsDto {
     private String description;
     private Double price;
     private Integer stock;
-    private Integer createdAt;
+    private LocalDateTime createdAt;
     private Boolean status;
     private Integer providerId;
     private Integer categoryId;
@@ -17,7 +19,7 @@ public class ProductsDto {
     public ProductsDto() {
     }
 
-    public ProductsDto(Integer productId, String name, String description, Double price, Integer stock, Integer createdAt, Boolean status, Integer providerId, Integer categoryId, Integer imageId, String imageUrl) {
+    public ProductsDto(Integer productId, String name, String description, Double price, Integer stock, LocalDateTime createdAt, Boolean status, Integer providerId, Integer categoryId, Integer imageId, String imageUrl) {
         this.productId = productId;
         this.name = name;
         this.description = description;
@@ -28,10 +30,9 @@ public class ProductsDto {
         this.providerId = providerId;
         this.categoryId = categoryId;
         this.imageId = imageId;
-        this.imageUrl = imageUrl; // Asignar el enlace de la imagen
+        this.imageUrl = imageUrl;
     }
 
-    // Getters y Setters
     public Integer getProductId() {
         return productId;
     }
@@ -72,11 +73,11 @@ public class ProductsDto {
         this.stock = stock;
     }
 
-    public Integer getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Integer createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
