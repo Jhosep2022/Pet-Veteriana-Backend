@@ -1,13 +1,13 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   application:
     name: mi-backend
   datasource:
-    url: jdbc:postgresql://localhost:5433/PetVeterinariaDB
-    username: postgres
-    password: jose
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/PetVeterinariaDB}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:jose}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -21,8 +21,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: jose74080986@gmail.com
-    password: ckpl nico lblw mvzw
+    username: ${MAIL_USERNAME:jose74080986@gmail.com}
+    password: ${MAIL_PASSWORD:ckpl nico lblw mvzw}
     properties:
       mail:
         smtp:
@@ -36,16 +36,16 @@ spring:
       max-request-size: 1GB
 
 minio:
-  url: http://localhost:9000
-  access-key: minio
-  secret-key: minio1234
-  bucket-name: aaasdfv
+  url: ${MINIO_URL:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:minio}
+  secret-key: ${MINIO_SECRET_KEY:minio1234}
+  bucket-name: ${MINIO_BUCKET_NAME:aaasdfv}
 
 jwt:
-  secret: "5b02bb72ff0fb7d8b31e78b8097f557b50cf4f0899e49709d82063f3bbdcf23c35f8c7b88b093f3f16e1dbfb30116e47bd5d5e3f21ae77a5f56ee0fe8e8cf7a9"
-  expiration: 86400000
-  header: Authorization
-  prefix: Bearer
+  secret: ${JWT_SECRET:5b02bb72ff0fb7d8b31e78b8097f557b50cf4f0899e49709d82063f3bbdcf23c35f8c7b88b093f3f16e1dbfb30116e47bd5d5e3f21ae77a5f56ee0fe8e8cf7a9}
+  expiration: ${JWT_EXPIRATION:86400000}
+  header: ${JWT_HEADER:Authorization}
+  prefix: ${JWT_PREFIX:Bearer}
 
 logging:
   level:
