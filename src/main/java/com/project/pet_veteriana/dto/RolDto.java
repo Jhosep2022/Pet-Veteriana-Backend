@@ -1,7 +1,5 @@
 package com.project.pet_veteriana.dto;
 
-import lombok.*;
-
 import java.time.LocalDateTime;
 
 public class RolDto {

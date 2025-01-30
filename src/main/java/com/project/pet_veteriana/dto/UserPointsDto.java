@@ -1,8 +1,5 @@
 package com.project.pet_veteriana.dto;
 
-import lombok.*;
-
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class UserPointsDto {

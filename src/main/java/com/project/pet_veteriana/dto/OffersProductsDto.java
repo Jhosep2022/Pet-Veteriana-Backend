@@ -1,6 +1,5 @@
 package com.project.pet_veteriana.dto;
 
-import lombok.*;
 
 public class OffersProductsDto {
 

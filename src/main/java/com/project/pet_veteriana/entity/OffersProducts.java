@@ -1,8 +1,6 @@
 package com.project.pet_veteriana.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.io.Serializable;
 
 @Entity
