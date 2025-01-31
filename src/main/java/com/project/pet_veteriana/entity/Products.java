@@ -26,8 +26,9 @@ public class Products implements Serializable {
     @Column(name = "stock", nullable = false)
     private Integer stock;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
 
     @Column(name = "status", nullable = false)
     private Boolean status;
@@ -46,6 +47,11 @@ public class Products implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
     private ImageS3 image;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Integer getProductId() {
         return productId;

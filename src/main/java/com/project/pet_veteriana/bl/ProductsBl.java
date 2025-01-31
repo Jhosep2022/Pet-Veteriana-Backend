@@ -50,15 +50,16 @@ public class ProductsBl {
         product.setDescription(productsDto.getDescription());
         product.setPrice(productsDto.getPrice());
         product.setStock(productsDto.getStock());
-        product.setCreatedAt(productsDto.getCreatedAt());
         product.setStatus(productsDto.getStatus());
         product.setProvider(providerOptional.get());
         product.setCategory(categoryOptional.get());
         product.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
 
+
         Products savedProduct = productsRepository.save(product);
         return convertToDto(savedProduct);
     }
+
 
     // Obtener todos los productos
     public List<ProductsDto> getAllProducts() {
