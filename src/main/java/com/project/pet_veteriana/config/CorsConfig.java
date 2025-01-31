@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:4200", "https://alberto840.github.io/web-pet/#/", "https://alberto804.github.io") // Replace with your frontend URLs
+                        .allowedOrigins("http://localhost:4200", "https://alberto840.github.io")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("Content-Type", "Authorization")
                         .allowCredentials(true);
