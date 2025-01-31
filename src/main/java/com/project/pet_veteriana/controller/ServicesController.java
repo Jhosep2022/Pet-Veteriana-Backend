@@ -140,4 +140,52 @@ public class ServicesController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+    // Obtener servicios recientes
+    @GetMapping("/recent")
+    public ResponseEntity<ResponseDto<List<ServicesDto>>> getRecentServices(@RequestHeader("Authorization") String token) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt.");
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<ServicesDto> services = servicesBl.getRecentServices();
+        return new ResponseEntity<>(ResponseDto.success(services, "Recent services fetched successfully"), HttpStatus.OK);
+    }
+
+    // Obtener servicios en oferta
+    @GetMapping("/on-offer")
+    public ResponseEntity<ResponseDto<List<ServicesDto>>> getServicesOnOffer(@RequestHeader("Authorization") String token) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt.");
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<ServicesDto> services = servicesBl.getServicesOnOffer();
+        return new ResponseEntity<>(ResponseDto.success(services, "Services on offer fetched successfully"), HttpStatus.OK);
+    }
+
+    // Obtener servicios por proveedor
+    @GetMapping("/by-provider/{providerId}")
+    public ResponseEntity<ResponseDto<List<ServicesDto>>> getServicesByProvider(
+            @PathVariable Integer providerId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt.");
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<ServicesDto> services = servicesBl.getServicesByProvider(providerId);
+        return new ResponseEntity<>(ResponseDto.success(services, "Services by provider fetched successfully"), HttpStatus.OK);
+    }
 }

@@ -132,4 +132,20 @@ public class ProvidersController {
             return ResponseDto.error("Error deleting provider: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
+
+    @GetMapping("/exists/{userId}")
+    public ResponseDto<Boolean> checkIfProviderExists(
+            @PathVariable Integer userId,
+            @RequestHeader("Authorization") String token
+    ) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return ResponseDto.error("Unauthorized", HttpStatus.UNAUTHORIZED.value());
+        }
+
+        boolean exists = providersBl.existsByUserId(userId);
+        return ResponseDto.success(exists, "Provider existence check successful");
+    }
 }

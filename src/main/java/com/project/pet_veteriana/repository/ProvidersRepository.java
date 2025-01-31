@@ -8,5 +8,5 @@ import java.util.List;
 public interface ProvidersRepository extends JpaRepository<Providers, Integer> {
 
     List<Providers> findByStatusTrue();
-
+    boolean existsByUser_UserId(Integer userId);
 }

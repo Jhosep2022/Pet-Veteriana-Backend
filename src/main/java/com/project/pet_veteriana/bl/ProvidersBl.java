@@ -129,6 +129,11 @@ public class ProvidersBl {
         }
     }
 
+    public boolean existsByUserId(Integer userId) {
+        return providersRepository.existsByUser_UserId(userId);
+    }
+
+
     // Mapear entidad a DTO
     private ProvidersDto mapToDto(Providers provider) {
         String imageUrl = null;

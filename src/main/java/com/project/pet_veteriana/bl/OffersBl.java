@@ -5,9 +5,9 @@ import com.project.pet_veteriana.entity.Offers;
 import com.project.pet_veteriana.repository.OffersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -16,8 +16,12 @@ public class OffersBl {
     @Autowired
     private OffersRepository offersRepository;
 
-    // Crear una nueva oferta
+    @Transactional
     public OffersDto createOffer(OffersDto offersDto) {
+        if (offersDto.getName() == null || offersDto.getName().trim().isEmpty()) {
+            throw new RuntimeException("El nombre de la oferta es obligatorio");
+        }
+
         Offers offer = new Offers();
         offer.setName(offersDto.getName());
         offer.setDescription(offersDto.getDescription());
@@ -31,29 +35,24 @@ public class OffersBl {
         return convertToDto(savedOffer);
     }
 
-    // Obtener todas las ofertas
     public List<OffersDto> getAllOffers() {
-        List<Offers> offers = offersRepository.findAll();
-        return offers.stream().map(this::convertToDto).collect(Collectors.toList());
+        return offersRepository.findAll()
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    // Obtener una oferta por ID
     public OffersDto getOfferById(Integer id) {
-        Optional<Offers> offerOptional = offersRepository.findById(id);
-        if (offerOptional.isEmpty()) {
-            throw new IllegalArgumentException("Oferta no encontrada");
-        }
-        return convertToDto(offerOptional.get());
+        return offersRepository.findById(id)
+                .map(this::convertToDto)
+                .orElseThrow(() -> new RuntimeException("Oferta no encontrada con el ID: " + id));
     }
 
-    // Actualizar una oferta
+    @Transactional
     public OffersDto updateOffer(Integer id, OffersDto offersDto) {
-        Optional<Offers> offerOptional = offersRepository.findById(id);
-        if (offerOptional.isEmpty()) {
-            throw new IllegalArgumentException("Oferta no encontrada");
-        }
+        Offers offer = offersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Oferta no encontrada con el ID: " + id));
 
-        Offers offer = offerOptional.get();
         offer.setName(offersDto.getName());
         offer.setDescription(offersDto.getDescription());
         offer.setDiscountType(offersDto.getDiscountType());
@@ -66,16 +65,15 @@ public class OffersBl {
         return convertToDto(updatedOffer);
     }
 
-    // Eliminar una oferta
+    @Transactional
     public boolean deleteOffer(Integer id) {
         if (offersRepository.existsById(id)) {
             offersRepository.deleteById(id);
             return true;
         }
-        return false;
+        throw new RuntimeException("No se encontró la oferta con ID: " + id);
     }
 
-    // Convertir entidad a DTO
     private OffersDto convertToDto(Offers offer) {
         return new OffersDto(
                 offer.getOfferId(),

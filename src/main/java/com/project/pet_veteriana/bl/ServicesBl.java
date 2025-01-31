@@ -5,6 +5,7 @@ import com.project.pet_veteriana.dto.ServicesDto;
 import com.project.pet_veteriana.entity.ImageS3;
 import com.project.pet_veteriana.entity.Providers;
 import com.project.pet_veteriana.entity.Services;
+import com.project.pet_veteriana.repository.OffersServicesRepository;
 import com.project.pet_veteriana.repository.ProvidersRepository;
 import com.project.pet_veteriana.repository.ServicesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class ServicesBl {
 
     @Autowired
     private ProvidersRepository providersRepository;
+
+    @Autowired
+    private OffersServicesRepository offersServicesRepository;
 
     @Autowired
     private ImagesS3Bl imagesS3Bl; // Manejo de imágenes en MinIO
@@ -106,6 +110,33 @@ public class ServicesBl {
         }
 
         return false;
+    }
+
+    // Obtener los servicios recientes (últimos 10 creados)
+    public List<ServicesDto> getRecentServices() {
+        return servicesRepository.findTop10ByOrderByCreatedAtDesc().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    // Obtener los servicios en oferta
+    public List<ServicesDto> getServicesOnOffer() {
+        LocalDateTime now = LocalDateTime.now();
+
+        return offersServicesRepository.findByOffer_StartDateBeforeAndOffer_EndDateAfterAndOffer_IsActiveTrue(now, now)
+                .stream()
+                .map(offersService -> mapToDto(offersService.getService()))
+                .collect(Collectors.toList());
+    }
+
+    // Obtener los servicios por proveedor
+    public List<ServicesDto> getServicesByProvider(Integer providerId) {
+        Providers provider = providersRepository.findById(providerId)
+                .orElseThrow(() -> new RuntimeException("Provider not found"));
+
+        return servicesRepository.findByProvider(provider).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 
     // Mapear entidad a DTO
