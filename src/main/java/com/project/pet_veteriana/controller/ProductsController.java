@@ -145,4 +145,49 @@ public class ProductsController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+    // Obtener productos recientes
+    @GetMapping("/recent")
+    public ResponseEntity<ResponseDto<List<ProductsDto>>> getRecentProducts(@RequestHeader("Authorization") String token) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<ProductsDto> products = productsBl.getRecentProducts();
+        return new ResponseEntity<>(ResponseDto.success(products, "Recent products fetched successfully"), HttpStatus.OK);
+    }
+
+    // Obtener productos en oferta
+    @GetMapping("/on-offer")
+    public ResponseEntity<ResponseDto<List<ProductsDto>>> getProductsOnOffer(@RequestHeader("Authorization") String token) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<ProductsDto> products = productsBl.getProductsOnOffer();
+        return new ResponseEntity<>(ResponseDto.success(products, "Products on offer fetched successfully"), HttpStatus.OK);
+    }
+
+    // Obtener productos por proveedor
+    @GetMapping("/by-provider/{providerId}")
+    public ResponseEntity<ResponseDto<List<ProductsDto>>> getProductsByProvider(
+            @PathVariable Integer providerId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<ProductsDto> products = productsBl.getProductsByProvider(providerId);
+        return new ResponseEntity<>(ResponseDto.success(products, "Products by provider fetched successfully"), HttpStatus.OK);
+    }
 }

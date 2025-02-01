@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +24,9 @@ public class ProductsBl {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private OffersProductsRepository offersProductsRepository;
 
     @Autowired
     private ImagesS3Bl imagesS3Bl;
@@ -115,6 +119,34 @@ public class ProductsBl {
             return true;
         }
         return false;
+    }
+
+    // Obtener productos recientes (últimos 10 creados)
+    public List<ProductsDto> getRecentProducts() {
+        return productsRepository.findTop10ByOrderByCreatedAtDesc()
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    // Obtener productos en oferta
+    public List<ProductsDto> getProductsOnOffer() {
+        LocalDateTime now = LocalDateTime.now();
+        return offersProductsRepository.findByOffer_StartDateBeforeAndOffer_EndDateAfterAndOffer_IsActiveTrue(now, now)
+                .stream()
+                .map(offersProduct -> convertToDto(offersProduct.getProduct()))
+                .collect(Collectors.toList());
+    }
+
+    // Obtener productos por proveedor
+    public List<ProductsDto> getProductsByProvider(Integer providerId) {
+        Providers provider = providersRepository.findById(providerId)
+                .orElseThrow(() -> new RuntimeException("Provider not found"));
+
+        return productsRepository.findByProvider(provider)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     // Convertir entidad a DTO
