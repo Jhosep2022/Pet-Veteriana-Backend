@@ -8,6 +8,7 @@ import com.project.pet_veteriana.config.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -147,5 +148,50 @@ public class ProvidersController {
 
         boolean exists = providersBl.existsByUserId(userId);
         return ResponseDto.success(exists, "Provider existence check successful");
+    }
+
+    // Obtener los proveedores con mejor rating
+    @GetMapping("/top")
+    public ResponseEntity<ResponseDto<List<ProvidersDto>>> getTopProviders(@RequestHeader("Authorization") String token) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<ProvidersDto> providers = providersBl.getTopProviders();
+        return new ResponseEntity<>(ResponseDto.success(providers, "Top providers fetched successfully"), HttpStatus.OK);
+    }
+
+    // Obtener los proveedores más recientes
+    @GetMapping("/recent")
+    public ResponseEntity<ResponseDto<List<ProvidersDto>>> getRecentProviders(@RequestHeader("Authorization") String token) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        List<ProvidersDto> providers = providersBl.getRecentProviders();
+        return new ResponseEntity<>(ResponseDto.success(providers, "Recent providers fetched successfully"), HttpStatus.OK);
+    }
+
+    // Obtener un proveedor por ID (tienda del proveedor)
+    @GetMapping("/{id}/store")
+    public ResponseEntity<ResponseDto<ProvidersDto>> getProviderStoreById(
+            @PathVariable("id") Integer providerId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        ProvidersDto provider = providersBl.getProviderStoreById(providerId);
+        return new ResponseEntity<>(ResponseDto.success(provider, "Provider store fetched successfully"), HttpStatus.OK);
     }
 }

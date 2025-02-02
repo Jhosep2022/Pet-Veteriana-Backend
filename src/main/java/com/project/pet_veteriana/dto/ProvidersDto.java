@@ -14,11 +14,13 @@ public class ProvidersDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean status;
+    private Integer productCount;
+    private Integer serviceCount;
 
     public ProvidersDto() {
     }
 
-    public ProvidersDto(Integer providerId, Integer userId, String name, String description, String address, String imageUrl, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status) {
+    public ProvidersDto(Integer providerId, Integer userId, String name, String description, String address, String imageUrl, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status, Integer productCount, Integer serviceCount) {
         this.providerId = providerId;
         this.userId = userId;
         this.name = name;
@@ -29,9 +31,10 @@ public class ProvidersDto {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.status = status;
+        this.productCount = productCount;
+        this.serviceCount = serviceCount;
     }
 
-    // Getters y Setters
     public Integer getProviderId() {
         return providerId;
     }
@@ -110,5 +113,21 @@ public class ProvidersDto {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public Integer getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(Integer productCount) {
+        this.productCount = productCount;
+    }
+
+    public Integer getServiceCount() {
+        return serviceCount;
+    }
+
+    public void setServiceCount(Integer serviceCount) {
+        this.serviceCount = serviceCount;
     }
 }

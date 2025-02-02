@@ -12,4 +12,6 @@ public interface ProductsRepository extends JpaRepository<Products, Integer> {
 
     // Obtener todos los productos de un proveedor específico
     List<Products> findByProvider(Providers provider);
+
+    int countByProvider(Providers provider);
 }

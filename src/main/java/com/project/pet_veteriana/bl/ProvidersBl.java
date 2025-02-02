@@ -5,7 +5,9 @@ import com.project.pet_veteriana.dto.ImageS3Dto;
 import com.project.pet_veteriana.entity.Providers;
 import com.project.pet_veteriana.entity.Users;
 import com.project.pet_veteriana.entity.ImageS3;
+import com.project.pet_veteriana.repository.ProductsRepository;
 import com.project.pet_veteriana.repository.ProvidersRepository;
+import com.project.pet_veteriana.repository.ServicesRepository;
 import com.project.pet_veteriana.repository.UsersRepository;
 import com.project.pet_veteriana.config.JwtTokenProvider;
 import com.project.pet_veteriana.bl.ImagesS3Bl;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProvidersBl {
@@ -32,6 +35,12 @@ public class ProvidersBl {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private ProductsRepository productsRepository;
+
+    @Autowired
+    private ServicesRepository servicesRepository;
 
     @Autowired
     private ImagesS3Bl imagesS3Bl;
@@ -133,6 +142,32 @@ public class ProvidersBl {
         return providersRepository.existsByUser_UserId(userId);
     }
 
+    // Obtener los proveedores con mejor rating (TOP 5)
+    public List<ProvidersDto> getTopProviders() {
+        return providersRepository.findTop5ByStatusTrueOrderByRatingDesc()
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    // Obtener los 10 proveedores más recientes
+    public List<ProvidersDto> getRecentProviders() {
+        return providersRepository.findTop10ByStatusTrueOrderByCreatedAtDesc()
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    // Obtener un proveedor por ID para mostrar su tienda
+    public ProvidersDto getProviderStoreById(Integer providerId) {
+        Optional<Providers> provider = providersRepository.findById(providerId);
+        if (provider.isPresent() && provider.get().getStatus()) {
+            return mapToDto(provider.get());
+        } else {
+            throw new RuntimeException("Provider not found or inactive");
+        }
+    }
+
 
     // Mapear entidad a DTO
     private ProvidersDto mapToDto(Providers provider) {
@@ -140,6 +175,10 @@ public class ProvidersBl {
         if (provider.getImage() != null) {
             imageUrl = imagesS3Bl.generateFileUrl(provider.getImage().getFileName());
         }
+
+        // Contar productos y servicios del proveedor
+        int productCount = productsRepository.countByProvider(provider);
+        int serviceCount = servicesRepository.countByProvider(provider);
 
         return new ProvidersDto(
                 provider.getProviderId(),
@@ -151,7 +190,9 @@ public class ProvidersBl {
                 provider.getRating(),
                 provider.getCreatedAt(),
                 provider.getUpdatedAt(),
-                provider.getStatus()
+                provider.getStatus(),
+                productCount, // Nuevo campo
+                serviceCount  // Nuevo campo
         );
     }
 }

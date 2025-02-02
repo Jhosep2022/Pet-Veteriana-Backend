@@ -190,4 +190,26 @@ public class ProductsController {
         List<ProductsDto> products = productsBl.getProductsByProvider(providerId);
         return new ResponseEntity<>(ResponseDto.success(products, "Products by provider fetched successfully"), HttpStatus.OK);
     }
+
+    // Obtener productos por usuario (buscando el proveedor correspondiente)
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<ResponseDto<List<ProductsDto>>> getProductsByUser(
+            @PathVariable Integer userId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            List<ProductsDto> products = productsBl.getProductsByUserId(userId);
+            return new ResponseEntity<>(ResponseDto.success(products, "Products by user fetched successfully"), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(ResponseDto.error(e.getMessage(), HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

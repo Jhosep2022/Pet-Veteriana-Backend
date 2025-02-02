@@ -149,6 +149,20 @@ public class ProductsBl {
                 .collect(Collectors.toList());
     }
 
+    // Obtener productos por usuario (buscando el proveedor correspondiente)
+    public List<ProductsDto> getProductsByUserId(Integer userId) {
+        // Buscar proveedor asociado al usuario
+        Providers provider = providersRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new RuntimeException("No provider found for userId: " + userId));
+
+        // Obtener los productos de ese proveedor
+        return productsRepository.findByProvider(provider)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+
     // Convertir entidad a DTO
     private ProductsDto convertToDto(Products product) {
         String imageUrl = null;

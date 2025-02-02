@@ -43,7 +43,7 @@ minio:
 
 jwt:
   secret: ${JWT_SECRET:5b02bb72ff0fb7d8b31e78b8097f557b50cf4f0899e49709d82063f3bbdcf23c35f8c7b88b093f3f16e1dbfb30116e47bd5d5e3f21ae77a5f56ee0fe8e8cf7a9}
-  expiration: ${JWT_EXPIRATION:86400000}
+  expiration: ${JWT_EXPIRATION:172800000}
   header: ${JWT_HEADER:Authorization}
   prefix: ${JWT_PREFIX:Bearer}
 

@@ -13,4 +13,6 @@ public interface ServicesRepository extends JpaRepository<Services, Integer> {
 
     // Obtener todos los servicios de un proveedor específico
     List<Services> findByProvider(Providers provider);
+
+    int countByProvider(Providers provider);
 }
