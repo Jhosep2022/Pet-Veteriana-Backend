@@ -1,4 +1,5 @@
 package com.project.pet_veteriana.entity;
+
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,23 +18,20 @@ public class TransactionHistory implements Serializable {
     @Column(name = "total_amount", nullable = false, precision = 10)
     private Double totalAmount;
 
-    @Column(name = "status", nullable = false)
-    private Boolean status;
+    @Column(name = "status", nullable = false, length = 20) // Cambio a String con longitud máxima de 20 caracteres
+    private String status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    // Relación con Users
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    // Relación con Services
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
     private Services service;
 
-    // Relación con Products
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Products product;
@@ -41,7 +39,7 @@ public class TransactionHistory implements Serializable {
     public TransactionHistory() {
     }
 
-    public TransactionHistory(Integer transactionHistoryId, Double totalAmount, Boolean status, LocalDateTime createdAt, Users user, Services service, Products product) {
+    public TransactionHistory(Integer transactionHistoryId, Double totalAmount, String status, LocalDateTime createdAt, Users user, Services service, Products product) {
         this.transactionHistoryId = transactionHistoryId;
         this.totalAmount = totalAmount;
         this.status = status;
@@ -67,11 +65,11 @@ public class TransactionHistory implements Serializable {
         this.totalAmount = totalAmount;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() { // Cambio en el tipo de retorno
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) { // Cambio en el tipo de parámetro
         this.status = status;
     }
 

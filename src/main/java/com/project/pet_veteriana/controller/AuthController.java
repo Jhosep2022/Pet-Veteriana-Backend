@@ -1,6 +1,7 @@
 package com.project.pet_veteriana.controller;
 
 import com.project.pet_veteriana.bl.AuthBl;
+import com.project.pet_veteriana.bl.PasswordResetService;
 import com.project.pet_veteriana.dto.LoginRequestDto;
 import com.project.pet_veteriana.dto.ResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class AuthController {
     @Autowired
     private AuthBl authBl;
 
+    @Autowired
+    private PasswordResetService passwordResetService;
+
     @PostMapping("/login")
     public ResponseEntity<ResponseDto<String>> login(@RequestBody LoginRequestDto loginRequest) {
         logger.info("Login attempt for email: {}", loginRequest.getEmail());
@@ -32,6 +36,16 @@ public class AuthController {
         } catch (Exception e) {
             logger.error("Login failed for email: {}. Error: {}", loginRequest.getEmail(), e.getMessage());
             return new ResponseEntity<>(ResponseDto.error("Invalid credentials", HttpStatus.UNAUTHORIZED.value()), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ResponseDto<String>> forgotPassword(@RequestParam String email) {
+        try {
+            passwordResetService.resetPasswordAndSendEmail(email);
+            return new ResponseEntity<>(ResponseDto.success("New password sent to your email", "Password reset successfully"), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(ResponseDto.error(e.getMessage(), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
         }
     }
 }

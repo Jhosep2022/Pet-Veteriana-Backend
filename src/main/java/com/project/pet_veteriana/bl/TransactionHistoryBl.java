@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +41,7 @@ public class TransactionHistoryBl {
 
         TransactionHistory transaction = new TransactionHistory();
         transaction.setTotalAmount(dto.getTotalAmount());
-        transaction.setStatus(dto.getStatus());
+        transaction.setStatus("pendiente"); // Estado por defecto
         transaction.setCreatedAt(LocalDateTime.now());
         transaction.setUser(user);
         transaction.setService(service);
@@ -92,6 +91,20 @@ public class TransactionHistoryBl {
             return true;
         }
         return false;
+    }
+
+    public TransactionHistoryDto updateTransactionStatus(Integer id, String status) {
+        TransactionHistory transaction = transactionHistoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+
+        // Validar que el nuevo estado sea válido
+        if (!status.equals("pendiente") && !status.equals("atendido") && !status.equals("cancelado")) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+
+        transaction.setStatus(status);
+        TransactionHistory updatedTransaction = transactionHistoryRepository.save(transaction);
+        return convertToDto(updatedTransaction);
     }
 
     private TransactionHistoryDto convertToDto(TransactionHistory transaction) {

@@ -77,7 +77,7 @@ public class TransactionHistoryController {
         return new ResponseEntity<>(ResponseDto.success(transaction, "Transaction fetched successfully"), HttpStatus.OK);
     }
 
-    // Actualizar una transacción
+    // Actualizar una transacción completa
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDto<TransactionHistoryDto>> updateTransactionHistory(
             @PathVariable Integer id, @RequestBody TransactionHistoryDto dto,
@@ -113,6 +113,28 @@ public class TransactionHistoryController {
             return new ResponseEntity<>(ResponseDto.success(null, "Transaction deleted successfully"), HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(ResponseDto.error("Transaction not found", HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // **Nuevo Endpoint: Actualizar solo el estado de una transacción**
+    @PutMapping("/{id}/status")
+    public ResponseEntity<ResponseDto<TransactionHistoryDto>> updateTransactionStatus(
+            @PathVariable Integer id, @RequestParam String status,
+            @RequestHeader("Authorization") String token) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt with token: {}", token);
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        logger.info("Updating status of transaction ID: {} to '{}'", id, status);
+        try {
+            TransactionHistoryDto updatedTransaction = transactionHistoryBl.updateTransactionStatus(id, status);
+            return new ResponseEntity<>(ResponseDto.success(updatedTransaction, "Transaction status updated"), HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(ResponseDto.error(e.getMessage(), HttpStatus.BAD_REQUEST.value()), HttpStatus.BAD_REQUEST);
         }
     }
 }

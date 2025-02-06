@@ -6,7 +6,7 @@ public class TransactionHistoryDto {
 
     private Integer transactionHistoryId;
     private Double totalAmount;
-    private Boolean status;
+    private String status;
     private LocalDateTime createdAt;
     private Integer userId;
     private Integer serviceId;
@@ -15,7 +15,7 @@ public class TransactionHistoryDto {
     public TransactionHistoryDto() {
     }
 
-    public TransactionHistoryDto(Integer transactionHistoryId, Double totalAmount, Boolean status, LocalDateTime createdAt, Integer userId, Integer serviceId, Integer productId) {
+    public TransactionHistoryDto(Integer transactionHistoryId, Double totalAmount, String status, LocalDateTime createdAt, Integer userId, Integer serviceId, Integer productId) {
         this.transactionHistoryId = transactionHistoryId;
         this.totalAmount = totalAmount;
         this.status = status;
@@ -41,11 +41,11 @@ public class TransactionHistoryDto {
         this.totalAmount = totalAmount;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
