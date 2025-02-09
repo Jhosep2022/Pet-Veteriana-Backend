@@ -5,7 +5,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,8 +16,13 @@ import java.util.Map;
 @Component
 public class JwtTokenProvider {
 
-    // Llave secreta generada automáticamente para firma
-    private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    // Llave secreta configurada desde application.yml
+    @Value("${jwt.secret}")
+    private String secretKeyString;
+
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(secretKeyString.getBytes());
+    }
 
     // Generar el token con los datos de usuario
     public String generateToken(UsersDto usuarioDto) {
@@ -26,12 +33,17 @@ public class JwtTokenProvider {
         claims.put("nombre", usuarioDto.getName());
         claims.put("idioma", usuarioDto.getPreferredLanguage());
 
+        // Agregar providerId si el usuario es un vendedor
+        if (usuarioDto.getProviderId() != null) {
+            claims.put("providerId", usuarioDto.getProviderId());
+        }
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(usuarioDto.getEmail())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(secretKey)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas de expiración
+                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -48,12 +60,17 @@ public class JwtTokenProvider {
 
     // Extraer todos los claims del token
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder().setSigningKey(getSecretKey()).build().parseClaimsJws(token).getBody();
     }
 
-    // Extraer el ID del usuario (idUsuario) del token
+    // Extraer el ID del usuario (userid) del token
     public Integer extractUserId(String token) {
-        return extractClaim(token, claims -> claims.get("idUsuario", Integer.class));  // Extraer el idUsuario
+        return extractClaim(token, claims -> claims.get("userid", Integer.class));
+    }
+
+    // Extraer el ID del proveedor (providerId) del token, si el usuario es un vendedor
+    public Integer extractProviderId(String token) {
+        return extractClaim(token, claims -> claims.get("providerId", Integer.class));
     }
 
     // Verificar si el token ha expirado
@@ -65,9 +82,13 @@ public class JwtTokenProvider {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // Validar el token
-    public Boolean validateToken(String token, String username) {
-        final String extractedUsername = extractUsername(token);
-        return (extractedUsername.equals(username) && !isTokenExpired(token));
+    // Validar el token correctamente
+    public Boolean validateToken(String token, String expectedUsername) {
+        try {
+            String extractedUsername = extractUsername(token);
+            return extractedUsername.equals(expectedUsername) && !isTokenExpired(token);
+        } catch (Exception e) {
+            return false; // Si hay un error, el token no es válido
+        }
     }
 }

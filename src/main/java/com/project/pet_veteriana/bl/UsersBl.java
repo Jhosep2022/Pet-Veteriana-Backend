@@ -136,15 +136,20 @@ public class UsersBl {
     private UsersDto mapToDto(Users user) {
         String imageUrl = null;
         if (user.getImage() != null) {
-            // Generar el enlace de la imagen desde MinIO
             imageUrl = imagesS3Bl.generateFileUrl(user.getImage().getFileName());
+        }
+
+        // Obtener providerId si el usuario es un vendedor
+        Integer providerId = null;
+        if (user.getRol() != null && user.getRol().getRolId() == 3) {
+            providerId = user.getUserId();
         }
 
         return new UsersDto(
                 user.getUserId(),
                 user.getName(),
                 user.getEmail(),
-                null,
+                null, // No pasamos password por seguridad
                 user.getPhoneNumber(),
                 user.getLocation(),
                 user.getPreferredLanguage(),
@@ -153,7 +158,8 @@ public class UsersBl {
                 user.getStatus(),
                 user.getRol() != null ? user.getRol().getRolId() : null,
                 user.getImage() != null ? user.getImage().getImageId() : null,
-                imageUrl
+                imageUrl,
+                providerId
         );
     }
 }

@@ -17,13 +17,16 @@ public class UsersDto {
     private Integer rolId;
     private Integer imageId;
     private String imageUrl;
+    private Integer providerId;
 
     // Constructor por defecto
     public UsersDto() {
     }
 
     // Constructor con parámetros
-    public UsersDto(Integer userId, String name, String email, String password, String phoneNumber, String location, String preferredLanguage, LocalDateTime lastLogin, LocalDateTime createdAt, Boolean status, Integer rolId, Integer imageId, String imageUrl) {
+    public UsersDto(Integer userId, String name, String email, String password, String phoneNumber, String location,
+                    String preferredLanguage, LocalDateTime lastLogin, LocalDateTime createdAt, Boolean status,
+                    Integer rolId, Integer imageId, String imageUrl, Integer providerId) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -37,6 +40,7 @@ public class UsersDto {
         this.rolId = rolId;
         this.imageId = imageId;
         this.imageUrl = imageUrl;
+        this.providerId = providerId;
     }
 
     // Getters y Setters
@@ -142,5 +146,13 @@ public class UsersDto {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Integer getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(Integer providerId) {
+        this.providerId = providerId;
     }
 }

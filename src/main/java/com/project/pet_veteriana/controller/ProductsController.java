@@ -35,23 +35,34 @@ public class ProductsController {
             @RequestParam("product") String productDtoJson,
             @RequestParam("file") MultipartFile file) throws Exception {
 
-        String token = request.getHeader("Authorization");
-        String extractedToken = token.replace("Bearer ", "");
-        String username = jwtTokenProvider.extractUsername(extractedToken);
+        logger.info("Received request to create product with image");
 
-        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+        if (file == null || file.isEmpty()) {
+            logger.error("El archivo no fue recibido en la petición.");
+            return new ResponseEntity<>(ResponseDto.error("Archivo no proporcionado", 400), HttpStatus.BAD_REQUEST);
+        }
+
+        logger.info("Archivo recibido: {}", file.getOriginalFilename());
+
+        String token = request.getHeader("Authorization");
+        String extractedToken = token != null ? token.replace("Bearer ", "") : null;
+
+        if (extractedToken == null || !jwtTokenProvider.validateToken(extractedToken, jwtTokenProvider.extractUsername(extractedToken))) {
             logger.error("Unauthorized access attempt.");
             return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
         }
 
-        logger.info("Creating new product with image");
+        logger.info("Processing product JSON: {}", productDtoJson);
+
         ObjectMapper objectMapper = new ObjectMapper();
         ProductsDto productsDto = objectMapper.readValue(productDtoJson, ProductsDto.class);
 
         ProductsDto createdProduct = productsBl.createProductWithImage(productsDto, file);
         ResponseDto<ProductsDto> response = ResponseDto.success(createdProduct, "Product created successfully");
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 
     @GetMapping
     public ResponseEntity<ResponseDto<List<ProductsDto>>> getAllProducts(@RequestHeader("Authorization") String token) {

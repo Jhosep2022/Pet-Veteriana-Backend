@@ -4,16 +4,22 @@ import com.project.pet_veteriana.config.JwtTokenProvider;
 import com.project.pet_veteriana.dto.LoginRequestDto;
 import com.project.pet_veteriana.dto.UsersDto;
 import com.project.pet_veteriana.entity.Users;
+import com.project.pet_veteriana.repository.ProvidersRepository;
 import com.project.pet_veteriana.repository.UsersRepository;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class AuthBl {
 
     @Autowired
     private UsersRepository usersRepository;
+
+    @Autowired
+    private ProvidersRepository providersRepository;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -28,16 +34,22 @@ public class AuthBl {
             throw new RuntimeException("Invalid credentials");
         }
 
-        // Crear un objeto UsersDto con todos los datos necesarios
+        // Crear un objeto UsersDto con los datos del usuario
         UsersDto userDto = new UsersDto();
-        userDto.setUserId(user.getUserId()); // Asumiendo que este es el campo en tu entidad Users
-        userDto.setRolId(user.getRol().getRolId());     // Asumiendo que tienes un campo rolId en tu entidad Users
+        userDto.setUserId(user.getUserId());
+        userDto.setRolId(user.getRol().getRolId());
         userDto.setEmail(user.getEmail());
-        userDto.setName(user.getName());       // Asumiendo que tienes un campo name
-        userDto.setPreferredLanguage(user.getPreferredLanguage()); // Asumiendo que tienes este campo
+        userDto.setName(user.getName());
+        userDto.setPreferredLanguage(user.getPreferredLanguage());
+
+        // Verificar si el usuario es un vendedor
+        Optional<Integer> providerId = providersRepository.findByUser_UserId(user.getUserId())
+                .map(provider -> provider.getProviderId());
+
+        // Si el usuario es un vendedor, agregar `providerId` en el token
+        providerId.ifPresent(userDto::setProviderId);
 
         // Generar el token con todos los datos
         return jwtTokenProvider.generateToken(userDto);
     }
-
 }
