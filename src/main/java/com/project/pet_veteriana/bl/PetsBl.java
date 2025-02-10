@@ -7,6 +7,7 @@ import com.project.pet_veteriana.entity.Pets;
 import com.project.pet_veteriana.entity.Users;
 import com.project.pet_veteriana.repository.PetsRepository;
 import com.project.pet_veteriana.repository.UsersRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -96,23 +97,41 @@ public class PetsBl {
         return Optional.of(convertToDto(updatedPet));
     }
 
-    // Eliminar una mascota
+    @Transactional
     public boolean deletePet(Integer petId) {
         Optional<Pets> petOptional = petsRepository.findById(petId);
+
         if (petOptional.isPresent()) {
             Pets pet = petOptional.get();
+
+            petsRepository.deleteVaccinationSchedulesByPetId(petId);
+
+            petsRepository.delete(pet);
+
             if (pet.getImage() != null) {
                 try {
-                    imagesS3Bl.deleteFile(pet.getImage().getFileName());
+                    imagesS3Bl.deleteFile(pet.getImage().getImageId());
                 } catch (Exception e) {
                     throw new RuntimeException("Error al eliminar la imagen asociada", e);
                 }
             }
-            petsRepository.delete(pet);
+
             return true;
         }
+
         return false;
     }
+
+
+
+
+
+    // Obtener todas las mascotas por ID de usuario
+    public List<PetsDto> getPetsByUserId(Integer userId) {
+        List<Pets> pets = petsRepository.findByUserId(userId);
+        return pets.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
 
     // Convertir entidad a DTO
     private PetsDto convertToDto(Pets pet) {

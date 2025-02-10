@@ -122,6 +122,27 @@ public class PetsController {
         }
     }
 
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<ResponseDto<List<PetsDto>>> getPetsByUserId(
+            @PathVariable Integer userId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            List<PetsDto> pets = petsBl.getPetsByUserId(userId);
+            return new ResponseEntity<>(ResponseDto.success(pets, "Pets by user fetched successfully"), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(ResponseDto.error(e.getMessage(), HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto<Void>> deletePet(
             @PathVariable("id") Integer id,

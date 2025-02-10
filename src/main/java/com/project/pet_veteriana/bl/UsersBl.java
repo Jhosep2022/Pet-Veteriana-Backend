@@ -7,6 +7,7 @@ import com.project.pet_veteriana.entity.Rol;
 import com.project.pet_veteriana.entity.Users;
 import com.project.pet_veteriana.repository.RolRepository;
 import com.project.pet_veteriana.repository.UsersRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -69,12 +70,12 @@ public class UsersBl {
     }
 
     // Actualizar un usuario con imagen
+    @Transactional
     public Optional<UsersDto> updateUserWithImage(Integer userId, UsersDto usersDto, MultipartFile file) throws Exception {
         Optional<Users> existingUser = usersRepository.findById(userId);
         if (existingUser.isPresent()) {
             Users user = existingUser.get();
 
-            // Subir la nueva imagen si se proporciona
             if (file != null && !file.isEmpty()) {
                 ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
                 user.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
@@ -83,10 +84,9 @@ public class UsersBl {
             user.setName(usersDto.getName());
             user.setEmail(usersDto.getEmail());
             user.setPhoneNumber(usersDto.getPhoneNumber());
-            user.setPassword(usersDto.getPassword()); // Encriptar si es necesario
             user.setLocation(usersDto.getLocation());
             user.setPreferredLanguage(usersDto.getPreferredLanguage());
-            user.setLastLogin(usersDto.getLastLogin());
+            user.setLastLogin(usersDto.getLastLogin() != null ? usersDto.getLastLogin() : user.getLastLogin());
             user.setStatus(usersDto.getStatus());
 
             Users updatedUser = usersRepository.save(user);
@@ -98,21 +98,26 @@ public class UsersBl {
     // Eliminar un usuario
     public boolean deleteUser(Integer userId) {
         Optional<Users> userOptional = usersRepository.findById(userId);
+
         if (userOptional.isPresent()) {
             Users user = userOptional.get();
+
             // Eliminar la imagen asociada, si existe
             if (user.getImage() != null) {
                 try {
-                    imagesS3Bl.deleteFile(user.getImage().getFileName()); // Asumiendo que existe esta función
+                    imagesS3Bl.deleteFile(user.getImage().getImageId()); // Usar imageId en lugar de fileName
                 } catch (Exception e) {
                     throw new RuntimeException("Error deleting associated image from MinIO", e);
                 }
             }
+
             usersRepository.delete(user);
             return true;
         }
+
         return false;
     }
+
 
     // Cambiar contraseña
     public void changePassword(String email, String oldPassword, String newPassword) {

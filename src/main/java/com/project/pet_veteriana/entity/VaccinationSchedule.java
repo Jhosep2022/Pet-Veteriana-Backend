@@ -26,7 +26,7 @@ public class VaccinationSchedule implements Serializable {
 
     // Relación con Pets
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pet_id", nullable = false)
+    @JoinColumn(name = "pet_id", nullable = true)
     private Pets pet;
 
     // Relación con Vaccination

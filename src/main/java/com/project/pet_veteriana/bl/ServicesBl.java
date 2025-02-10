@@ -5,9 +5,8 @@ import com.project.pet_veteriana.dto.ServicesDto;
 import com.project.pet_veteriana.entity.ImageS3;
 import com.project.pet_veteriana.entity.Providers;
 import com.project.pet_veteriana.entity.Services;
-import com.project.pet_veteriana.repository.OffersServicesRepository;
-import com.project.pet_veteriana.repository.ProvidersRepository;
-import com.project.pet_veteriana.repository.ServicesRepository;
+import com.project.pet_veteriana.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +27,12 @@ public class ServicesBl {
 
     @Autowired
     private OffersServicesRepository offersServicesRepository;
+
+    @Autowired
+    private ServiceAvailabilityRepository serviceAvailabilityRepository;
+
+    @Autowired
+    private TransactionHistoryRepository transactionHistoryRepository;
 
     @Autowired
     private ImagesS3Bl imagesS3Bl; // Manejo de imágenes en MinIO
@@ -99,20 +104,46 @@ public class ServicesBl {
     }
 
     // Eliminar un servicio
+    @Transactional
     public boolean deleteService(Integer id) {
         Optional<Services> optionalService = servicesRepository.findById(id);
 
         if (optionalService.isPresent()) {
             Services service = optionalService.get();
+
+            // 1. Eliminar referencias en ServiceAvailability
+            serviceAvailabilityRepository.deleteByService(service);
+
+            // 2. Eliminar referencias en OffersServices
+            offersServicesRepository.deleteByService(service);
+
+            // 3. Eliminar referencias en TransactionHistory
+            transactionHistoryRepository.deleteByService(service);
+
+            // 4. Desvincular la imagen antes de eliminar el servicio
             if (service.getImage() != null) {
-                imagesS3Bl.deleteFile(service.getImage().getFileName());
+                Integer imageId = service.getImage().getImageId();
+                service.setImage(null);
+                servicesRepository.save(service);
+
+                try {
+                    imagesS3Bl.deleteFile(imageId);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error al eliminar la imagen asociada", e);
+                }
             }
+
+            // 5. Finalmente, eliminar el servicio
             servicesRepository.delete(service);
             return true;
         }
 
         return false;
     }
+
+
+
+
 
     // Obtener los servicios recientes (últimos 10 creados)
     public List<ServicesDto> getRecentServices() {

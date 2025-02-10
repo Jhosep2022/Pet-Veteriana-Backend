@@ -34,7 +34,7 @@ public class Users implements Serializable {
     @Column(name = "preferred_language", nullable = false, length = 10)
     private String preferredLanguage;
 
-    @Column(name = "last_login", nullable = false)
+    @Column(name = "last_login", nullable = true)
     private LocalDateTime lastLogin;
 
     @Column(name = "created_at", nullable = false)

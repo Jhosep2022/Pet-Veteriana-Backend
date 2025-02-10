@@ -43,7 +43,7 @@ public class Services implements Serializable {
 
     // Relación con ImageS3
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
+    @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = true)
     private ImageS3 image;
 
     public Services() {

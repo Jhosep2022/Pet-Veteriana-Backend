@@ -13,4 +13,8 @@ public interface ServiceAvailabilityRepository extends JpaRepository<ServiceAvai
 
     // Obtener todos los horarios (incluidos los reservados)
     List<ServiceAvailability> findByService(Services service);
+
+    // Eliminar todos los registros asociados a un servicio
+    void deleteByService(Services service);
 }
+

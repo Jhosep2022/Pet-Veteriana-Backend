@@ -29,11 +29,11 @@ public class TransactionHistory implements Serializable {
     private Users user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
+    @JoinColumn(name = "service_id", nullable = true)
     private Services service;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = true)
     private Products product;
 
     public TransactionHistory() {

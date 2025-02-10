@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,22 +78,31 @@ public class ImagesS3Bl {
     }
 
     // Método para eliminar un archivo de MinIO
-    public void deleteFile(String fileName) {
+    public void deleteFile(Integer imageId) {
         try {
-            // Eliminar el archivo de MinIO
-            minioClient.removeObject(
-                    io.minio.RemoveObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(fileName)
-                            .build()
-            );
+            Optional<ImageS3> optionalImage = imageS3Repository.findById(imageId);
 
-            // Eliminar el registro del archivo de la base de datos
-            imageS3Repository.findByFileName(fileName).ifPresent(imageS3Repository::delete);
+            if (optionalImage.isPresent()) {
+                ImageS3 image = optionalImage.get();
+
+                // Eliminar el archivo de MinIO
+                minioClient.removeObject(
+                        io.minio.RemoveObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(image.getFileName())
+                                .build()
+                );
+
+                // Eliminar el registro del archivo de la base de datos
+                imageS3Repository.delete(image);
+            } else {
+                throw new RuntimeException("No se encontró la imagen con el ID especificado.");
+            }
         } catch (Exception e) {
             throw new RuntimeException("Error deleting file from MinIO or database", e);
         }
     }
+
 
     // Método para listar todos los archivos subidos
     public List<ImageS3Dto> listUploadedFiles() {

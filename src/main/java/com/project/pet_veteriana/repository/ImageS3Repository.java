@@ -10,4 +10,8 @@ import java.util.Optional;
 public interface ImageS3Repository extends JpaRepository<ImageS3, Integer> {
 
     Optional<ImageS3> findByFileName(String fileName);
+
+    Optional<ImageS3> findById(Integer imageId);
+
+
 }

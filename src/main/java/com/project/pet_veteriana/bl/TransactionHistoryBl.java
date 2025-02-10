@@ -34,14 +34,22 @@ public class TransactionHistoryBl {
     public TransactionHistoryDto createTransactionHistory(TransactionHistoryDto dto) {
         Users user = usersRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Services service = servicesRepository.findById(dto.getServiceId())
-                .orElseThrow(() -> new RuntimeException("Service not found"));
-        Products product = productsRepository.findById(dto.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Services service = null;
+        if (dto.getServiceId() != null) {
+            service = servicesRepository.findById(dto.getServiceId())
+                    .orElseThrow(() -> new RuntimeException("Service not found"));
+        }
+
+        Products product = null;
+        if (dto.getProductId() != null) {
+            product = productsRepository.findById(dto.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+        }
 
         TransactionHistory transaction = new TransactionHistory();
         transaction.setTotalAmount(dto.getTotalAmount());
-        transaction.setStatus("pendiente"); // Estado por defecto
+        transaction.setStatus("pendiente");
         transaction.setCreatedAt(LocalDateTime.now());
         transaction.setUser(user);
         transaction.setService(service);
@@ -50,6 +58,7 @@ public class TransactionHistoryBl {
         TransactionHistory savedTransaction = transactionHistoryRepository.save(transaction);
         return convertToDto(savedTransaction);
     }
+
 
     public List<TransactionHistoryDto> getAllTransactionHistories() {
         return transactionHistoryRepository.findAll()
@@ -114,8 +123,9 @@ public class TransactionHistoryBl {
                 transaction.getStatus(),
                 transaction.getCreatedAt(),
                 transaction.getUser().getUserId(),
-                transaction.getService().getServiceId(),
-                transaction.getProduct().getProductId()
+                transaction.getService() != null ? transaction.getService().getServiceId() : null, // ✅ Evita NullPointerException
+                transaction.getProduct() != null ? transaction.getProduct().getProductId() : null  // ✅ Evita NullPointerException
         );
     }
+
 }

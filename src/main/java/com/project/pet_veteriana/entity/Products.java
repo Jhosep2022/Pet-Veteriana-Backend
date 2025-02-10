@@ -44,9 +44,10 @@ public class Products implements Serializable {
     private Category category;
 
     // Relación con ImageS3
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = true)
     private ImageS3 image;
+
 
     @PrePersist
     protected void onCreate() {

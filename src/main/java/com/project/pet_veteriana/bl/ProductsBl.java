@@ -4,6 +4,7 @@ import com.project.pet_veteriana.dto.ImageS3Dto;
 import com.project.pet_veteriana.dto.ProductsDto;
 import com.project.pet_veteriana.entity.*;
 import com.project.pet_veteriana.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,24 +30,34 @@ public class ProductsBl {
     private OffersProductsRepository offersProductsRepository;
 
     @Autowired
+    private ImageS3Repository imageS3Repository;
+
+    @Autowired
     private ImagesS3Bl imagesS3Bl;
 
-    // Crear un nuevo producto con imagen
+    @Transactional
     public ProductsDto createProductWithImage(ProductsDto productsDto, MultipartFile file) throws Exception {
         // Validar proveedor
-        Optional<Providers> providerOptional = providersRepository.findById(productsDto.getProviderId());
-        if (providerOptional.isEmpty()) {
-            throw new IllegalArgumentException("Proveedor no encontrado");
-        }
+        Providers provider = providersRepository.findById(productsDto.getProviderId())
+                .orElseThrow(() -> new IllegalArgumentException("Proveedor no encontrado"));
 
         // Validar categoría
-        Optional<Category> categoryOptional = categoryRepository.findById(productsDto.getCategoryId());
-        if (categoryOptional.isEmpty()) {
-            throw new IllegalArgumentException("Categoría no encontrada");
-        }
+        Category category = categoryRepository.findById(productsDto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
 
-        // Subir imagen a MinIO
+        // Subir imagen a MinIO y guardar en la base de datos
         ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
+
+        // Convertir DTO a entidad ImageS3
+        ImageS3 image = new ImageS3();
+        image.setImageId(imageDto.getImageId());
+        image.setFileName(imageDto.getFileName());
+        image.setFileType(imageDto.getFileType());
+        image.setSize(imageDto.getSize());
+        image.setUploadDate(imageDto.getUploadDate());
+
+        // Guardar imagen en la base de datos
+        image = imageS3Repository.save(image);
 
         // Crear objeto producto
         Products product = new Products();
@@ -55,14 +66,17 @@ public class ProductsBl {
         product.setPrice(productsDto.getPrice());
         product.setStock(productsDto.getStock());
         product.setStatus(productsDto.getStatus());
-        product.setProvider(providerOptional.get());
-        product.setCategory(categoryOptional.get());
-        product.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
+        product.setProvider(provider);
+        product.setCategory(category);
+        product.setImage(image); // Asignar la imagen que ya está en la base de datos
 
-
+        // Guardar producto en la base de datos
         Products savedProduct = productsRepository.save(product);
+
+        // Convertir entidad a DTO y retornar
         return convertToDto(savedProduct);
     }
+
 
 
     // Obtener todos los productos
@@ -104,22 +118,39 @@ public class ProductsBl {
     }
 
     // Eliminar un producto
+    @Transactional
     public boolean deleteProduct(Integer productId) {
         Optional<Products> productOptional = productsRepository.findById(productId);
+
         if (productOptional.isPresent()) {
             Products product = productOptional.get();
+
+            // Eliminar todas las referencias en offers_products antes de eliminar el producto
+            offersProductsRepository.deleteByProduct(product);
+
+            // Verificar si el producto tiene una imagen antes de eliminarla
             if (product.getImage() != null) {
                 try {
-                    imagesS3Bl.deleteFile(product.getImage().getFileName());
+                    imagesS3Bl.deleteFile(product.getImage().getImageId());
                 } catch (Exception e) {
                     throw new RuntimeException("Error al eliminar la imagen asociada", e);
                 }
             }
+
+            // Establecer la imagen como null antes de eliminar el producto
+            product.setImage(null);
+            productsRepository.save(product);
+
+            // Ahora eliminar el producto
             productsRepository.delete(product);
             return true;
         }
+
         return false;
     }
+
+
+
 
     // Obtener productos recientes (últimos 10 creados)
     public List<ProductsDto> getRecentProducts() {

@@ -18,4 +18,6 @@ public interface OffersServicesRepository extends JpaRepository<OffersServices, 
 
     // Obtener todas las ofertas de un servicio específico
     List<OffersServices> findByService(Services service);
+
+    void deleteByService(Services service);
 }
