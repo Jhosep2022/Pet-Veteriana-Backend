@@ -223,4 +223,26 @@ public class ProductsController {
         }
     }
 
+    // Obtener productos por categoría
+    @GetMapping("/by-category/{categoryId}")
+    public ResponseEntity<ResponseDto<List<ProductsDto>>> getProductsByCategory(
+            @PathVariable Integer categoryId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            List<ProductsDto> products = productsBl.getProductsByCategory(categoryId);
+            return new ResponseEntity<>(ResponseDto.success(products, "Products by category fetched successfully"), HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(ResponseDto.error(e.getMessage(), HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 }

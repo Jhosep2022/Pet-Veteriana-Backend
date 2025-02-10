@@ -45,6 +45,7 @@ public class ServicesBl {
         service.setPrice(servicesDto.getPrice());
         service.setDuration(servicesDto.getDuration());
         service.setDescription(servicesDto.getDescription());
+        service.setTipoAtencion(servicesDto.getTipoAtencion()); // Nuevo campo
         service.setCreatedAt(LocalDateTime.now());
         service.setStatus(servicesDto.getStatus());
         service.setProvider(provider);
@@ -89,6 +90,7 @@ public class ServicesBl {
         service.setPrice(servicesDto.getPrice());
         service.setDuration(servicesDto.getDuration());
         service.setDescription(servicesDto.getDescription());
+        service.setTipoAtencion(servicesDto.getTipoAtencion()); // Nuevo campo
         service.setStatus(servicesDto.getStatus());
         service.setProvider(provider);
 
@@ -139,6 +141,14 @@ public class ServicesBl {
                 .collect(Collectors.toList());
     }
 
+    // Obtener servicios por tipo de atención (Domicilio, Consultorio, Ambos)
+    public List<ServicesDto> getServicesByTipoAtencion(String tipoAtencion) {
+        return servicesRepository.findByTipoAtencion(tipoAtencion)
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     // Mapear entidad a DTO
     private ServicesDto mapToDto(Services service) {
         String imageUrl = null;
@@ -156,7 +166,8 @@ public class ServicesBl {
                 service.getStatus(),
                 service.getProvider().getProviderId(),
                 service.getImage() != null ? service.getImage().getImageId() : null,
-                imageUrl
+                imageUrl,
+                service.getTipoAtencion() // Nuevo campo
         );
     }
 }

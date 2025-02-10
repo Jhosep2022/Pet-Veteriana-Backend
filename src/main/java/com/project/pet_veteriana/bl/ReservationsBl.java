@@ -2,9 +2,11 @@ package com.project.pet_veteriana.bl;
 
 import com.project.pet_veteriana.dto.ReservationsDto;
 import com.project.pet_veteriana.entity.Reservations;
+import com.project.pet_veteriana.entity.ServiceAvailability;
 import com.project.pet_veteriana.entity.Services;
 import com.project.pet_veteriana.entity.Users;
 import com.project.pet_veteriana.repository.ReservationsRepository;
+import com.project.pet_veteriana.repository.ServiceAvailabilityRepository;
 import com.project.pet_veteriana.repository.ServicesRepository;
 import com.project.pet_veteriana.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,22 +29,35 @@ public class ReservationsBl {
     @Autowired
     private ServicesRepository servicesRepository;
 
+    @Autowired
+    private ServiceAvailabilityRepository availabilityRepository;
+
     public ReservationsDto createReservation(ReservationsDto dto) {
-        Optional<Users> userOptional = usersRepository.findById(dto.getUserId());
-        if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("Usuario no encontrado");
+        Users user = usersRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+        Services service = servicesRepository.findById(dto.getServiceId())
+                .orElseThrow(() -> new IllegalArgumentException("Servicio no encontrado"));
+
+        ServiceAvailability availability = availabilityRepository.findById(dto.getAvailabilityId())
+                .orElseThrow(() -> new IllegalArgumentException("Horario no disponible"));
+
+        // Verificar si ya hay una reserva en ese horario
+        boolean isReserved = availability.getIsReserved();
+        if (isReserved) {
+            throw new IllegalArgumentException("Este horario ya está reservado");
         }
 
-        Optional<Services> serviceOptional = servicesRepository.findById(dto.getServiceId());
-        if (serviceOptional.isEmpty()) {
-            throw new IllegalArgumentException("Servicio no encontrado");
-        }
+        // Marcar la disponibilidad como reservada
+        availability.setIsReserved(true);
+        availabilityRepository.save(availability);
 
         Reservations reservation = new Reservations();
-        reservation.setUser(userOptional.get());
-        reservation.setService(serviceOptional.get());
+        reservation.setUser(user);
+        reservation.setService(service);
+        reservation.setAvailability(availability);
         reservation.setDate(dto.getDate());
-        reservation.setStatus(dto.getStatus());
+        reservation.setStatus("PENDIENTE"); // Nuevo estado por defecto
         reservation.setCreatedAt(LocalDateTime.now());
 
         Reservations savedReservation = reservationsRepository.save(reservation);
@@ -55,33 +70,28 @@ public class ReservationsBl {
     }
 
     public ReservationsDto getReservationById(Integer id) {
-        Optional<Reservations> reservationOptional = reservationsRepository.findById(id);
-        if (reservationOptional.isEmpty()) {
-            throw new IllegalArgumentException("Reservación no encontrada");
-        }
-        return convertToDto(reservationOptional.get());
+        Reservations reservation = reservationsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Reservación no encontrada"));
+        return convertToDto(reservation);
     }
 
     public ReservationsDto updateReservation(Integer id, ReservationsDto dto) {
-        Optional<Reservations> reservationOptional = reservationsRepository.findById(id);
-        if (reservationOptional.isEmpty()) {
-            throw new IllegalArgumentException("Reservación no encontrada");
-        }
+        Reservations reservation = reservationsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Reservación no encontrada"));
 
-        Reservations reservation = reservationOptional.get();
+        Users user = usersRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
-        Optional<Users> userOptional = usersRepository.findById(dto.getUserId());
-        if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("Usuario no encontrado");
-        }
+        Services service = servicesRepository.findById(dto.getServiceId())
+                .orElseThrow(() -> new IllegalArgumentException("Servicio no encontrado"));
 
-        Optional<Services> serviceOptional = servicesRepository.findById(dto.getServiceId());
-        if (serviceOptional.isEmpty()) {
-            throw new IllegalArgumentException("Servicio no encontrado");
-        }
+        ServiceAvailability availability = availabilityRepository.findById(dto.getAvailabilityId())
+                .orElseThrow(() -> new IllegalArgumentException("Horario no disponible"));
 
-        reservation.setUser(userOptional.get());
-        reservation.setService(serviceOptional.get());
+        // Actualizar los datos de la reservación
+        reservation.setUser(user);
+        reservation.setService(service);
+        reservation.setAvailability(availability);
         reservation.setDate(dto.getDate());
         reservation.setStatus(dto.getStatus());
 
@@ -90,11 +100,20 @@ public class ReservationsBl {
     }
 
     public boolean deleteReservation(Integer id) {
-        if (reservationsRepository.existsById(id)) {
-            reservationsRepository.deleteById(id);
-            return true;
+        Reservations reservation = reservationsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Reservación no encontrada"));
+
+        if (!"PENDIENTE".equals(reservation.getStatus())) {
+            throw new IllegalArgumentException("Solo se pueden eliminar reservaciones pendientes");
         }
-        return false;
+
+        // Liberar el horario reservado
+        ServiceAvailability availability = reservation.getAvailability();
+        availability.setIsReserved(false);
+        availabilityRepository.save(availability);
+
+        reservationsRepository.delete(reservation);
+        return true;
     }
 
     private ReservationsDto convertToDto(Reservations reservation) {
@@ -102,6 +121,7 @@ public class ReservationsBl {
                 reservation.getReservationId(),
                 reservation.getUser().getUserId(),
                 reservation.getService().getServiceId(),
+                reservation.getAvailability().getAvailabilityId(),
                 reservation.getDate(),
                 reservation.getStatus(),
                 reservation.getCreatedAt()

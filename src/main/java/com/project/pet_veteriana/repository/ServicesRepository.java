@@ -15,4 +15,5 @@ public interface ServicesRepository extends JpaRepository<Services, Integer> {
     List<Services> findByProvider(Providers provider);
 
     int countByProvider(Providers provider);
+    List<Services> findByTipoAtencion(String tipoAtencion);
 }

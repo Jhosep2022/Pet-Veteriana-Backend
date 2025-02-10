@@ -27,6 +27,9 @@ public class Services implements Serializable {
     @Column(name = "description", nullable = false, length = 150)
     private String description;
 
+    @Column(name = "tipo_atencion", nullable = false, length = 100)
+    private String tipoAtencion; // Nuevo atributo
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -46,12 +49,13 @@ public class Services implements Serializable {
     public Services() {
     }
 
-    public Services(Integer serviceId, String serviceName, Double price, Integer duration, String description, LocalDateTime createdAt, Boolean status, Providers provider, ImageS3 image) {
+    public Services(Integer serviceId, String serviceName, Double price, Integer duration, String description, String tipoAtencion, LocalDateTime createdAt, Boolean status, Providers provider, ImageS3 image) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.price = price;
         this.duration = duration;
         this.description = description;
+        this.tipoAtencion = tipoAtencion; // Nuevo atributo en constructor
         this.createdAt = createdAt;
         this.status = status;
         this.provider = provider;
@@ -96,6 +100,14 @@ public class Services implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getTipoAtencion() {
+        return tipoAtencion;
+    }
+
+    public void setTipoAtencion(String tipoAtencion) {
+        this.tipoAtencion = tipoAtencion;
     }
 
     public LocalDateTime getCreatedAt() {

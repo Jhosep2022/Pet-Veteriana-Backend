@@ -1,4 +1,5 @@
 package com.project.pet_veteriana.dto;
+
 import java.time.LocalDateTime;
 
 public class ReservationsDto {
@@ -6,17 +7,20 @@ public class ReservationsDto {
     private Integer reservationId;
     private Integer userId;
     private Integer serviceId;
+    private Integer availabilityId;
     private LocalDateTime date;
-    private Boolean status;
+    private String status;
     private LocalDateTime createdAt;
 
     public ReservationsDto() {
     }
 
-    public ReservationsDto(Integer reservationId, Integer userId, Integer serviceId, LocalDateTime date, Boolean status, LocalDateTime createdAt) {
+    public ReservationsDto(Integer reservationId, Integer userId, Integer serviceId, Integer availabilityId,
+                           LocalDateTime date, String status, LocalDateTime createdAt) {
         this.reservationId = reservationId;
         this.userId = userId;
         this.serviceId = serviceId;
+        this.availabilityId = availabilityId;
         this.date = date;
         this.status = status;
         this.createdAt = createdAt;
@@ -46,6 +50,14 @@ public class ReservationsDto {
         this.serviceId = serviceId;
     }
 
+    public Integer getAvailabilityId() {
+        return availabilityId;
+    }
+
+    public void setAvailabilityId(Integer availabilityId) {
+        this.availabilityId = availabilityId;
+    }
+
     public LocalDateTime getDate() {
         return date;
     }
@@ -54,11 +66,11 @@ public class ReservationsDto {
         this.date = date;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

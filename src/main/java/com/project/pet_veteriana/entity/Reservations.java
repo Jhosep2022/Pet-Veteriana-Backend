@@ -1,7 +1,6 @@
 package com.project.pet_veteriana.entity;
 
 import jakarta.persistence.*;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -24,11 +23,15 @@ public class Reservations implements Serializable {
     @JoinColumn(name = "service_id", referencedColumnName = "service_id", nullable = false)
     private Services service;
 
+    @ManyToOne
+    @JoinColumn(name = "availability_id", referencedColumnName = "availability_id", nullable = false)
+    private ServiceAvailability availability;
+
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
-    @Column(name = "status", nullable = false)
-    private Boolean status;
+    @Column(name = "status", nullable = false, length = 20)
+    private String status; // Cambiado a String
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -36,11 +39,12 @@ public class Reservations implements Serializable {
     public Reservations() {
     }
 
-
-    public Reservations(Integer reservationId, Users user, Services service, LocalDateTime date, Boolean status, LocalDateTime createdAt) {
+    public Reservations(Integer reservationId, Users user, Services service, ServiceAvailability availability,
+                        LocalDateTime date, String status, LocalDateTime createdAt) {
         this.reservationId = reservationId;
         this.user = user;
         this.service = service;
+        this.availability = availability;
         this.date = date;
         this.status = status;
         this.createdAt = createdAt;
@@ -70,6 +74,14 @@ public class Reservations implements Serializable {
         this.service = service;
     }
 
+    public ServiceAvailability getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(ServiceAvailability availability) {
+        this.availability = availability;
+    }
+
     public LocalDateTime getDate() {
         return date;
     }
@@ -78,11 +90,11 @@ public class Reservations implements Serializable {
         this.date = date;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

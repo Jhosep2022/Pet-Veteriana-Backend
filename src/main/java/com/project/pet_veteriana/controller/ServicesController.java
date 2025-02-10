@@ -188,4 +188,11 @@ public class ServicesController {
         List<ServicesDto> services = servicesBl.getServicesByProvider(providerId);
         return new ResponseEntity<>(ResponseDto.success(services, "Services by provider fetched successfully"), HttpStatus.OK);
     }
+
+    @GetMapping("/by-tipo/{tipoAtencion}")
+    public ResponseEntity<ResponseDto<List<ServicesDto>>> getServicesByTipoAtencion(@PathVariable String tipoAtencion) {
+        List<ServicesDto> services = servicesBl.getServicesByTipoAtencion(tipoAtencion);
+        return new ResponseEntity<>(ResponseDto.success(services, "Services filtered by tipoAtencion successfully"), HttpStatus.OK);
+    }
+
 }

@@ -162,6 +162,21 @@ public class ProductsBl {
                 .collect(Collectors.toList());
     }
 
+    // Obtener productos por categoría
+    public List<ProductsDto> getProductsByCategory(Integer categoryId) {
+        // Buscar la categoría en la base de datos
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + categoryId));
+
+        // Buscar productos de la categoría
+        return productsRepository.findByCategory(category)
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+
+
 
     // Convertir entidad a DTO
     private ProductsDto convertToDto(Products product) {
