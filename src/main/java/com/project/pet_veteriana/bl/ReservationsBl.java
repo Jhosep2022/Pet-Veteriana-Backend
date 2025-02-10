@@ -116,6 +116,22 @@ public class ReservationsBl {
         return true;
     }
 
+    public ReservationsDto updateReservationStatus(Integer id, String status) {
+        Reservations reservation = reservationsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Reservación no encontrada"));
+
+        // Validar si el estado es válido
+        List<String> validStatuses = List.of("PENDIENTE", "ATENDIDO", "CANCELADO");
+        if (!validStatuses.contains(status.toUpperCase())) {
+            throw new IllegalArgumentException("Estado no válido. Los valores permitidos son: PENDIENTE, ATENDIDO, CANCELADO");
+        }
+
+        reservation.setStatus(status.toUpperCase());
+        Reservations updatedReservation = reservationsRepository.save(reservation);
+        return convertToDto(updatedReservation);
+    }
+
+
     private ReservationsDto convertToDto(Reservations reservation) {
         return new ReservationsDto(
                 reservation.getReservationId(),

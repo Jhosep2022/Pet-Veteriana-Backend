@@ -105,4 +105,24 @@ public class ReservationsController {
             return new ResponseEntity<>(ResponseDto.error("Reservation not found", HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_FOUND);
         }
     }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ResponseDto<ReservationsDto>> updateReservationStatus(
+            @PathVariable Integer id,
+            @RequestParam String status,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt with token: {}", token);
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        logger.info("Updating reservation status with ID: {} by user: {}", id, username);
+        ReservationsDto updatedReservation = reservationsBl.updateReservationStatus(id, status);
+        return new ResponseEntity<>(ResponseDto.success(updatedReservation, "Reservation status updated successfully"), HttpStatus.OK);
+    }
+
 }
