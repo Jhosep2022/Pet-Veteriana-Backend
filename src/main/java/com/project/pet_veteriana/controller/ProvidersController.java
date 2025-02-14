@@ -75,7 +75,7 @@ public class ProvidersController {
     // Obtener Provider por ID
     @GetMapping("/{id}")
     public ResponseDto<ProvidersDto> getProviderById(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
-        // Validar el token JWT antes de proceder
+        // Extraer y validar el token
         String extractedToken = token.replace("Bearer ", "");
         String username = jwtTokenProvider.extractUsername(extractedToken);
 
@@ -84,22 +84,23 @@ public class ProvidersController {
         }
 
         try {
-            ProvidersDto provider = providersBl.getProviderById(id);
+            // Llamar a la lógica de negocio pasando el token para validar si el usuario es dueño
+            ProvidersDto provider = providersBl.getProviderById(id, extractedToken);
             return ResponseDto.success(provider, "Provider fetched successfully");
         } catch (Exception e) {
             return ResponseDto.error("Provider not found: " + e.getMessage(), HttpStatus.NOT_FOUND.value());
         }
     }
 
+
     // Actualizar Provider con imagen
     @PutMapping("/{id}")
     public ResponseDto<ProvidersDto> updateProvider(
             @PathVariable Integer id,
-            @RequestPart("provider") ProvidersDto providersDto,
-            @RequestPart(value = "file", required = false) MultipartFile file,
+            @RequestParam("provider") String providerJson,
+            @RequestParam(value = "file", required = false) MultipartFile file,  // Imagen opcional
             @RequestHeader("Authorization") String token
     ) {
-        // Validar el token JWT antes de proceder
         String extractedToken = token.replace("Bearer ", "");
         String username = jwtTokenProvider.extractUsername(extractedToken);
 
@@ -108,12 +109,18 @@ public class ProvidersController {
         }
 
         try {
+            // Convertir JSON a DTO
+            ObjectMapper objectMapper = new ObjectMapper();
+            ProvidersDto providersDto = objectMapper.readValue(providerJson, ProvidersDto.class);
+
+            // Llamar a la capa de lógica para actualizar
             ProvidersDto updatedProvider = providersBl.updateProvider(id, providersDto, file);
             return ResponseDto.success(updatedProvider, "Provider updated successfully");
         } catch (Exception e) {
             return ResponseDto.error("Error updating provider: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
+
 
     // Eliminar Provider (borrado lógico)
     @DeleteMapping("/{id}")

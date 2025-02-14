@@ -87,10 +87,22 @@ public class ProvidersBl {
     }
 
     // Obtener Provider por ID
-    public ProvidersDto getProviderById(Integer id) {
+    public ProvidersDto getProviderById(Integer id, String token) {
+        String username = jwtTokenProvider.extractUsername(token);
+        Users authenticatedUser = usersRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Optional<Providers> provider = providersRepository.findById(id);
         if (provider.isPresent()) {
-            return mapToDto(provider.get());
+            Providers prov = provider.get();
+
+            // Verificar si el usuario autenticado es el dueño del perfil
+            if (!prov.getUser().getUserId().equals(authenticatedUser.getUserId())) {
+                prov.setReviews(prov.getReviews() + 1); // Solo incrementa si no es el dueño
+                providersRepository.save(prov);
+            }
+
+            return mapToDto(prov);
         } else {
             throw new RuntimeException("Provider not found");
         }
@@ -191,8 +203,10 @@ public class ProvidersBl {
                 provider.getCreatedAt(),
                 provider.getUpdatedAt(),
                 provider.getStatus(),
-                productCount, // Nuevo campo
-                serviceCount  // Nuevo campo
+                productCount,
+                serviceCount,
+                provider.getReviews()
         );
     }
+
 }

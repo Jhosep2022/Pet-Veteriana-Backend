@@ -44,10 +44,13 @@ public class Providers implements Serializable {
     @Column(name = "status", nullable = false)
     private Boolean status;
 
+    @Column(name = "reviews", nullable = true) // Nuevo campo
+    private Integer reviews = 0;
+
     public Providers() {
     }
 
-    public Providers(Integer providerId, Users user, String name, String description, String address, ImageS3 image, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status) {
+    public Providers(Integer providerId, Users user, String name, String description, String address, ImageS3 image, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status, Integer reviews) {
         this.providerId = providerId;
         this.user = user;
         this.name = name;
@@ -58,9 +61,9 @@ public class Providers implements Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.status = status;
+        this.reviews = reviews;
     }
 
-    // Getters y Setters
     public Integer getProviderId() {
         return providerId;
     }
@@ -139,5 +142,13 @@ public class Providers implements Serializable {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public Integer getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Integer reviews) {
+        this.reviews = reviews;
     }
 }

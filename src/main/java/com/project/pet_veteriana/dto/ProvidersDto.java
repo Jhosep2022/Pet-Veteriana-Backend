@@ -16,11 +16,12 @@ public class ProvidersDto {
     private Boolean status;
     private Integer productCount;
     private Integer serviceCount;
+    private Integer reviews;
 
     public ProvidersDto() {
     }
 
-    public ProvidersDto(Integer providerId, Integer userId, String name, String description, String address, String imageUrl, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status, Integer productCount, Integer serviceCount) {
+    public ProvidersDto(Integer providerId, Integer userId, String name, String description, String address, String imageUrl, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status, Integer productCount, Integer serviceCount, Integer reviews) {
         this.providerId = providerId;
         this.userId = userId;
         this.name = name;
@@ -33,6 +34,7 @@ public class ProvidersDto {
         this.status = status;
         this.productCount = productCount;
         this.serviceCount = serviceCount;
+        this.reviews = reviews;
     }
 
     public Integer getProviderId() {
@@ -129,5 +131,13 @@ public class ProvidersDto {
 
     public void setServiceCount(Integer serviceCount) {
         this.serviceCount = serviceCount;
+    }
+
+    public Integer getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Integer reviews) {
+        this.reviews = reviews;
     }
 }
