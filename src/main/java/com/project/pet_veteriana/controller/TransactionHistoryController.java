@@ -116,6 +116,45 @@ public class TransactionHistoryController {
         }
     }
 
+    // Nuevo Endpoint: Obtener transacciones por User ID
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ResponseDto<List<TransactionHistoryDto>>> getTransactionsByUserId(
+            @PathVariable Integer userId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt with token: {}", token);
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        logger.info("Fetching transactions for user with ID: {} requested by {}", userId, username);
+        List<TransactionHistoryDto> transactions = transactionHistoryBl.getTransactionHistoriesByUserId(userId);
+        return new ResponseEntity<>(ResponseDto.success(transactions, "Transactions fetched successfully"), HttpStatus.OK);
+    }
+
+    // Nuevo Endpoint: Obtener transacciones por Provider ID
+    @GetMapping("/provider/{providerId}")
+    public ResponseEntity<ResponseDto<List<TransactionHistoryDto>>> getTransactionsByProviderId(
+            @PathVariable Integer providerId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt with token: {}", token);
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        logger.info("Fetching transactions for provider with ID: {} requested by {}", providerId, username);
+        List<TransactionHistoryDto> transactions = transactionHistoryBl.getTransactionHistoriesByProviderId(providerId);
+        return new ResponseEntity<>(ResponseDto.success(transactions, "Transactions fetched successfully"), HttpStatus.OK);
+    }
+
+
     // **Nuevo Endpoint: Actualizar solo el estado de una transacción**
     @PutMapping("/{id}/status")
     public ResponseEntity<ResponseDto<TransactionHistoryDto>> updateTransactionStatus(

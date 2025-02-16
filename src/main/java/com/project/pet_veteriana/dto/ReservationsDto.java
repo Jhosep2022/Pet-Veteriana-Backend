@@ -8,6 +8,7 @@ public class ReservationsDto {
     private Integer userId;
     private Integer serviceId;
     private Integer availabilityId;
+    private Integer petId;
     private LocalDateTime date;
     private String status;
     private LocalDateTime createdAt;
@@ -15,12 +16,12 @@ public class ReservationsDto {
     public ReservationsDto() {
     }
 
-    public ReservationsDto(Integer reservationId, Integer userId, Integer serviceId, Integer availabilityId,
-                           LocalDateTime date, String status, LocalDateTime createdAt) {
+    public ReservationsDto(Integer reservationId, Integer userId, Integer serviceId, Integer availabilityId, Integer petId, LocalDateTime date, String status, LocalDateTime createdAt) {
         this.reservationId = reservationId;
         this.userId = userId;
         this.serviceId = serviceId;
         this.availabilityId = availabilityId;
+        this.petId = petId;
         this.date = date;
         this.status = status;
         this.createdAt = createdAt;
@@ -56,6 +57,14 @@ public class ReservationsDto {
 
     public void setAvailabilityId(Integer availabilityId) {
         this.availabilityId = availabilityId;
+    }
+
+    public Integer getPetId() {
+        return petId;
+    }
+
+    public void setPetId(Integer petId) {
+        this.petId = petId;
     }
 
     public LocalDateTime getDate() {

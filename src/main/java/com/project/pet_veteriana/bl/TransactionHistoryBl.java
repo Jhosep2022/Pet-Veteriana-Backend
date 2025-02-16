@@ -73,6 +73,26 @@ public class TransactionHistoryBl {
         return convertToDto(transaction);
     }
 
+    public List<TransactionHistoryDto> getTransactionHistoriesByUserId(Integer userId) {
+        List<TransactionHistory> transactions = transactionHistoryRepository.findByUserUserId(userId);
+        return transactions.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<TransactionHistoryDto> getTransactionHistoriesByProviderId(Integer providerId) {
+        List<TransactionHistory> transactions = transactionHistoryRepository.findByProviderId(providerId);
+
+        if (transactions.isEmpty()) {
+            return List.of(); // Devuelve lista vacía en lugar de lanzar excepción
+        }
+
+        return transactions.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+
     public TransactionHistoryDto updateTransactionHistory(Integer id, TransactionHistoryDto dto) {
         TransactionHistory transaction = transactionHistoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction History not found"));

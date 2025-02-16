@@ -87,6 +87,43 @@ public class ReservationsController {
         return new ResponseEntity<>(ResponseDto.success(updatedReservation, "Reservation updated successfully"), HttpStatus.OK);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ResponseDto<List<ReservationsDto>>> getReservationsByUser(
+            @PathVariable Integer userId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt with token: {}", token);
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        logger.info("Fetching reservations for user with ID: {} by user: {}", userId, username);
+        List<ReservationsDto> reservations = reservationsBl.getByIdUser(userId);
+        return new ResponseEntity<>(ResponseDto.success(reservations, "Reservations fetched successfully"), HttpStatus.OK);
+    }
+
+    @GetMapping("/provider/{providerId}")
+    public ResponseEntity<ResponseDto<List<ReservationsDto>>> getReservationsByProvider(
+            @PathVariable Integer providerId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt with token: {}", token);
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        logger.info("Fetching reservations for provider with ID: {} by user: {}", providerId, username);
+        List<ReservationsDto> reservations = reservationsBl.getByIdProvider(providerId);
+        return new ResponseEntity<>(ResponseDto.success(reservations, "Reservations fetched successfully"), HttpStatus.OK);
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto<Void>> deleteReservation(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
         String extractedToken = token.replace("Bearer ", "");

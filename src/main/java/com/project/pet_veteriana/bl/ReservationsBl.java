@@ -1,14 +1,8 @@
 package com.project.pet_veteriana.bl;
 
 import com.project.pet_veteriana.dto.ReservationsDto;
-import com.project.pet_veteriana.entity.Reservations;
-import com.project.pet_veteriana.entity.ServiceAvailability;
-import com.project.pet_veteriana.entity.Services;
-import com.project.pet_veteriana.entity.Users;
-import com.project.pet_veteriana.repository.ReservationsRepository;
-import com.project.pet_veteriana.repository.ServiceAvailabilityRepository;
-import com.project.pet_veteriana.repository.ServicesRepository;
-import com.project.pet_veteriana.repository.UsersRepository;
+import com.project.pet_veteriana.entity.*;
+import com.project.pet_veteriana.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +24,9 @@ public class ReservationsBl {
     private ServicesRepository servicesRepository;
 
     @Autowired
+    private PetsRepository petRepository;
+
+    @Autowired
     private ServiceAvailabilityRepository availabilityRepository;
 
     public ReservationsDto createReservation(ReservationsDto dto) {
@@ -42,9 +39,11 @@ public class ReservationsBl {
         ServiceAvailability availability = availabilityRepository.findById(dto.getAvailabilityId())
                 .orElseThrow(() -> new IllegalArgumentException("Horario no disponible"));
 
+        Pets pet = petRepository.findById(dto.getPetId())
+                .orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
+
         // Verificar si ya hay una reserva en ese horario
-        boolean isReserved = availability.getIsReserved();
-        if (isReserved) {
+        if (availability.getIsReserved()) {
             throw new IllegalArgumentException("Este horario ya está reservado");
         }
 
@@ -56,8 +55,9 @@ public class ReservationsBl {
         reservation.setUser(user);
         reservation.setService(service);
         reservation.setAvailability(availability);
+        reservation.setPet(pet);
         reservation.setDate(dto.getDate());
-        reservation.setStatus("PENDIENTE"); // Nuevo estado por defecto
+        reservation.setStatus("PENDIENTE"); // Estado por defecto
         reservation.setCreatedAt(LocalDateTime.now());
 
         Reservations savedReservation = reservationsRepository.save(reservation);
@@ -75,6 +75,18 @@ public class ReservationsBl {
         return convertToDto(reservation);
     }
 
+    public List<ReservationsDto> getByIdUser(Integer userId) {
+        List<Reservations> reservations = reservationsRepository.findByUser_UserId(userId);
+        return reservations.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    public List<ReservationsDto> getByIdProvider(Integer providerId) {
+        List<Reservations> reservations = reservationsRepository.findByService_Provider_ProviderId(providerId);
+        return reservations.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+
+
     public ReservationsDto updateReservation(Integer id, ReservationsDto dto) {
         Reservations reservation = reservationsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Reservación no encontrada"));
@@ -88,16 +100,21 @@ public class ReservationsBl {
         ServiceAvailability availability = availabilityRepository.findById(dto.getAvailabilityId())
                 .orElseThrow(() -> new IllegalArgumentException("Horario no disponible"));
 
+        Pets pet = petRepository.findById(dto.getPetId())
+                .orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada"));
+
         // Actualizar los datos de la reservación
         reservation.setUser(user);
         reservation.setService(service);
         reservation.setAvailability(availability);
+        reservation.setPet(pet);
         reservation.setDate(dto.getDate());
         reservation.setStatus(dto.getStatus());
 
         Reservations updatedReservation = reservationsRepository.save(reservation);
         return convertToDto(updatedReservation);
     }
+
 
     public boolean deleteReservation(Integer id) {
         Reservations reservation = reservationsRepository.findById(id)
@@ -121,9 +138,9 @@ public class ReservationsBl {
                 .orElseThrow(() -> new IllegalArgumentException("Reservación no encontrada"));
 
         // Validar si el estado es válido
-        List<String> validStatuses = List.of("PENDIENTE", "ATENDIDO", "CANCELADO");
+        List<String> validStatuses = List.of("PENDIENTE", "ATENDIDO", "CANCELADO", "REALIZADO");
         if (!validStatuses.contains(status.toUpperCase())) {
-            throw new IllegalArgumentException("Estado no válido. Los valores permitidos son: PENDIENTE, ATENDIDO, CANCELADO");
+            throw new IllegalArgumentException("Estado no válido. Los valores permitidos son: PENDIENTE, ATENDIDO, CANCELADO, REALIZADO");
         }
 
         reservation.setStatus(status.toUpperCase());
@@ -138,9 +155,11 @@ public class ReservationsBl {
                 reservation.getUser().getUserId(),
                 reservation.getService().getServiceId(),
                 reservation.getAvailability().getAvailabilityId(),
+                reservation.getPet().getPetId(),
                 reservation.getDate(),
                 reservation.getStatus(),
                 reservation.getCreatedAt()
         );
     }
+
 }

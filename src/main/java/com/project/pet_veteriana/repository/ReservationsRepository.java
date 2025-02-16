@@ -13,4 +13,6 @@ public interface ReservationsRepository extends JpaRepository<Reservations, Inte
     List<Reservations> findByUser_UserId(Integer userId);
 
     List<Reservations> findByService_ServiceId(Integer serviceId);
+
+    List<Reservations> findByService_Provider_ProviderId(Integer providerId);
 }

@@ -27,11 +27,15 @@ public class Reservations implements Serializable {
     @JoinColumn(name = "availability_id", referencedColumnName = "availability_id", nullable = false)
     private ServiceAvailability availability;
 
+    @ManyToOne
+    @JoinColumn(name = "pet_id", referencedColumnName = "pet_id", nullable = false)
+    private Pets pet;
+
     @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
     @Column(name = "status", nullable = false, length = 20)
-    private String status; // Cambiado a String
+    private String status;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -40,11 +44,12 @@ public class Reservations implements Serializable {
     }
 
     public Reservations(Integer reservationId, Users user, Services service, ServiceAvailability availability,
-                        LocalDateTime date, String status, LocalDateTime createdAt) {
+                        Pets pet, LocalDateTime date, String status, LocalDateTime createdAt) {
         this.reservationId = reservationId;
         this.user = user;
         this.service = service;
         this.availability = availability;
+        this.pet = pet;
         this.date = date;
         this.status = status;
         this.createdAt = createdAt;
@@ -80,6 +85,14 @@ public class Reservations implements Serializable {
 
     public void setAvailability(ServiceAvailability availability) {
         this.availability = availability;
+    }
+
+    public Pets getPet() {
+        return pet;
+    }
+
+    public void setPet(Pets pet) {
+        this.pet = pet;
     }
 
     public LocalDateTime getDate() {
