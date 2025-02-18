@@ -87,6 +87,24 @@ public class ReviewsController {
         return new ResponseEntity<>(ResponseDto.success(updatedReview, "Review updated successfully"), HttpStatus.OK);
     }
 
+    @GetMapping("/provider/{providerId}")
+    public ResponseEntity<ResponseDto<List<ReviewsDto>>> getReviewsByProviderId(
+            @PathVariable Integer providerId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Unauthorized access attempt with token: {}", token);
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        logger.info("Fetching reviews for provider ID: {} by user: {}", providerId, username);
+        List<ReviewsDto> reviews = reviewsBl.getReviewsByProviderId(providerId);
+        return new ResponseEntity<>(ResponseDto.success(reviews, "Reviews fetched successfully"), HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto<Void>> deleteReview(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
         String extractedToken = token.replace("Bearer ", "");

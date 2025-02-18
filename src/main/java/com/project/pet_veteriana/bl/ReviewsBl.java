@@ -62,6 +62,11 @@ public class ReviewsBl {
         return convertToDto(review);
     }
 
+    public List<ReviewsDto> getReviewsByProviderId(Integer providerId) {
+        List<Reviews> reviews = reviewsRepository.findByProviderProviderId(providerId);
+        return reviews.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
     public ReviewsDto updateReview(Integer id, ReviewsDto dto) {
         Reviews existingReview = reviewsRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Review not found"));
