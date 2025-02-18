@@ -42,7 +42,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setSubject(usuarioDto.getEmail())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas de expiración
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 73))
                 .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
