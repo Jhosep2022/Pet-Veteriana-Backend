@@ -50,7 +50,7 @@ public class Users implements Serializable {
 
     // Relación con ImageS3
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ImageS3_image_id", referencedColumnName = "image_id", nullable = false)
+    @JoinColumn(name = "ImageS3_image_id", referencedColumnName = "image_id", nullable = true)
     private ImageS3 image;
 
     @PrePersist

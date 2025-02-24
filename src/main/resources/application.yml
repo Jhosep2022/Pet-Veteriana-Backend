@@ -7,7 +7,7 @@ spring:
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/PetVeterinariaDB}
     username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:joses}
+    password: ${DATABASE_PASSWORD:jose}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

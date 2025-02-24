@@ -96,27 +96,33 @@ public class UsersBl {
     }
 
     // Eliminar un usuario
+    @Transactional
     public boolean deleteUser(Integer userId) {
         Optional<Users> userOptional = usersRepository.findById(userId);
 
         if (userOptional.isPresent()) {
             Users user = userOptional.get();
 
-            // Eliminar la imagen asociada, si existe
+            // Desvincular la imagen antes de eliminarla
             if (user.getImage() != null) {
                 try {
-                    imagesS3Bl.deleteFile(user.getImage().getImageId()); // Usar imageId en lugar de fileName
+                    imagesS3Bl.deleteFile(user.getImage().getImageId());
                 } catch (Exception e) {
                     throw new RuntimeException("Error deleting associated image from MinIO", e);
                 }
+                user.setImage(null); // IMPORTANTE: Desvincular la imagen antes de eliminar el usuario
+                usersRepository.save(user); // Guardar la desvinculación antes de eliminar el usuario
             }
 
+            // Ahora eliminamos el usuario
             usersRepository.delete(user);
             return true;
         }
 
         return false;
     }
+
+
 
 
     // Cambiar contraseña
