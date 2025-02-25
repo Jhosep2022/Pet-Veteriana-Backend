@@ -48,10 +48,31 @@ public class Products implements Serializable {
     @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = true)
     private ImageS3 image;
 
+    // Relación opcional con SubSubCategoria
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_sub_categoria_id", nullable = true)
+    private SubSubCategoria subSubCategoria;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    public Products() {
+    }
+
+    public Products(Integer productId, String name, String description, Double price, Integer stock, LocalDateTime createdAt, Boolean status, Providers provider, Category category, ImageS3 image, SubSubCategoria subSubCategoria) {
+        this.productId = productId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.stock = stock;
+        this.createdAt = createdAt;
+        this.status = status;
+        this.provider = provider;
+        this.category = category;
+        this.image = image;
+        this.subSubCategoria = subSubCategoria;
     }
 
     public Integer getProductId() {
@@ -132,5 +153,13 @@ public class Products implements Serializable {
 
     public void setImage(ImageS3 image) {
         this.image = image;
+    }
+
+    public SubSubCategoria getSubSubCategoria() {
+        return subSubCategoria;
+    }
+
+    public void setSubSubCategoria(SubSubCategoria subSubCategoria) {
+        this.subSubCategoria = subSubCategoria;
     }
 }

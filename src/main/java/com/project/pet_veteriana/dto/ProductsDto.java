@@ -14,12 +14,15 @@ public class ProductsDto {
     private Integer providerId;
     private Integer categoryId;
     private Integer imageId;
-    private String imageUrl; // Nuevo campo para el enlace de la imagen
+    private String imageUrl;
+    private Integer subSubCategoriaId; // Campo opcional para sub-subcategoría
 
     public ProductsDto() {
     }
 
-    public ProductsDto(Integer productId, String name, String description, Double price, Integer stock, LocalDateTime createdAt, Boolean status, Integer providerId, Integer categoryId, Integer imageId, String imageUrl) {
+    public ProductsDto(Integer productId, String name, String description, Double price, Integer stock,
+                       LocalDateTime createdAt, Boolean status, Integer providerId, Integer categoryId,
+                       Integer imageId, String imageUrl, Integer subSubCategoriaId) {
         this.productId = productId;
         this.name = name;
         this.description = description;
@@ -31,6 +34,7 @@ public class ProductsDto {
         this.categoryId = categoryId;
         this.imageId = imageId;
         this.imageUrl = imageUrl;
+        this.subSubCategoriaId = subSubCategoriaId;
     }
 
     public Integer getProductId() {
@@ -119,5 +123,13 @@ public class ProductsDto {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Integer getSubSubCategoriaId() {
+        return subSubCategoriaId;
+    }
+
+    public void setSubSubCategoriaId(Integer subSubCategoriaId) {
+        this.subSubCategoriaId = subSubCategoriaId;
     }
 }

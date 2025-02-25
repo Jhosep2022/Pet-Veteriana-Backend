@@ -30,6 +30,9 @@ public class ProductsBl {
     private OffersProductsRepository offersProductsRepository;
 
     @Autowired
+    private SubSubCategoriaRepository subSubCategoriaRepository;
+
+    @Autowired
     private ImageS3Repository imageS3Repository;
 
     @Autowired
@@ -37,29 +40,28 @@ public class ProductsBl {
 
     @Transactional
     public ProductsDto createProductWithImage(ProductsDto productsDto, MultipartFile file) throws Exception {
-        // Validar proveedor
         Providers provider = providersRepository.findById(productsDto.getProviderId())
                 .orElseThrow(() -> new IllegalArgumentException("Proveedor no encontrado"));
 
-        // Validar categoría
         Category category = categoryRepository.findById(productsDto.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
 
-        // Subir imagen a MinIO y guardar en la base de datos
         ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
 
-        // Convertir DTO a entidad ImageS3
         ImageS3 image = new ImageS3();
         image.setImageId(imageDto.getImageId());
         image.setFileName(imageDto.getFileName());
         image.setFileType(imageDto.getFileType());
         image.setSize(imageDto.getSize());
         image.setUploadDate(imageDto.getUploadDate());
-
-        // Guardar imagen en la base de datos
         image = imageS3Repository.save(image);
 
-        // Crear objeto producto
+        SubSubCategoria subSubCategoria = null;
+        if (productsDto.getSubSubCategoriaId() != null) {
+            subSubCategoria = subSubCategoriaRepository.findById(productsDto.getSubSubCategoriaId())
+                    .orElseThrow(() -> new IllegalArgumentException("SubSubCategoria no encontrada"));
+        }
+
         Products product = new Products();
         product.setName(productsDto.getName());
         product.setDescription(productsDto.getDescription());
@@ -68,16 +70,12 @@ public class ProductsBl {
         product.setStatus(productsDto.getStatus());
         product.setProvider(provider);
         product.setCategory(category);
-        product.setImage(image); // Asignar la imagen que ya está en la base de datos
+        product.setImage(image);
+        product.setSubSubCategoria(subSubCategoria);
 
-        // Guardar producto en la base de datos
         Products savedProduct = productsRepository.save(product);
-
-        // Convertir entidad a DTO y retornar
         return convertToDto(savedProduct);
     }
-
-
 
     // Obtener todos los productos
     public List<ProductsDto> getAllProducts() {
@@ -92,6 +90,7 @@ public class ProductsBl {
     }
 
     // Actualizar un producto con imagen
+    @Transactional
     public Optional<ProductsDto> updateProductWithImage(Integer productId, ProductsDto productsDto, MultipartFile file) throws Exception {
         Optional<Products> existingProduct = productsRepository.findById(productId);
         if (existingProduct.isEmpty()) {
@@ -100,7 +99,6 @@ public class ProductsBl {
 
         Products product = existingProduct.get();
 
-        // Subir nueva imagen si se proporciona
         if (file != null && !file.isEmpty()) {
             ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
             product.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
@@ -110,8 +108,14 @@ public class ProductsBl {
         product.setDescription(productsDto.getDescription());
         product.setPrice(productsDto.getPrice());
         product.setStock(productsDto.getStock());
-        product.setCreatedAt(productsDto.getCreatedAt());
         product.setStatus(productsDto.getStatus());
+
+        SubSubCategoria subSubCategoria = null;
+        if (productsDto.getSubSubCategoriaId() != null) {
+            subSubCategoria = subSubCategoriaRepository.findById(productsDto.getSubSubCategoriaId())
+                    .orElseThrow(() -> new IllegalArgumentException("SubSubCategoria no encontrada"));
+        }
+        product.setSubSubCategoria(subSubCategoria);
 
         Products updatedProduct = productsRepository.save(product);
         return Optional.of(convertToDto(updatedProduct));
@@ -206,16 +210,12 @@ public class ProductsBl {
                 .collect(Collectors.toList());
     }
 
-
-
-
     // Convertir entidad a DTO
     private ProductsDto convertToDto(Products product) {
         String imageUrl = null;
         if (product.getImage() != null) {
             imageUrl = imagesS3Bl.generateFileUrl(product.getImage().getFileName());
         }
-
         return new ProductsDto(
                 product.getProductId(),
                 product.getName(),
@@ -227,7 +227,8 @@ public class ProductsBl {
                 product.getProvider().getProviderId(),
                 product.getCategory().getCategoryId(),
                 product.getImage() != null ? product.getImage().getImageId() : null,
-                imageUrl
+                imageUrl,
+                product.getSubSubCategoria() != null ? product.getSubSubCategoria().getSubSubCategoriaId() : null
         );
     }
 }
