@@ -28,7 +28,7 @@ public class Services implements Serializable {
     private String description;
 
     @Column(name = "tipo_atencion", nullable = false, length = 100)
-    private String tipoAtencion; // Nuevo atributo
+    private String tipoAtencion;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -36,30 +36,35 @@ public class Services implements Serializable {
     @Column(name = "status", nullable = false)
     private Boolean status;
 
-    // Relación con Providers
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id", nullable = false)
     private Providers provider;
 
-    // Relación con ImageS3
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", referencedColumnName = "image_id", nullable = true)
     private ImageS3 image;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sub_sub_categoria_id", nullable = true)
+    private SubSubCategoria subSubCategoria;
+
     public Services() {
     }
 
-    public Services(Integer serviceId, String serviceName, Double price, Integer duration, String description, String tipoAtencion, LocalDateTime createdAt, Boolean status, Providers provider, ImageS3 image) {
+    public Services(Integer serviceId, String serviceName, Double price, Integer duration, String description,
+                    String tipoAtencion, LocalDateTime createdAt, Boolean status, Providers provider,
+                    ImageS3 image, SubSubCategoria subSubCategoria) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.price = price;
         this.duration = duration;
         this.description = description;
-        this.tipoAtencion = tipoAtencion; // Nuevo atributo en constructor
+        this.tipoAtencion = tipoAtencion;
         this.createdAt = createdAt;
         this.status = status;
         this.provider = provider;
         this.image = image;
+        this.subSubCategoria = subSubCategoria;
     }
 
     public Integer getServiceId() {
@@ -140,5 +145,13 @@ public class Services implements Serializable {
 
     public void setImage(ImageS3 image) {
         this.image = image;
+    }
+
+    public SubSubCategoria getSubSubCategoria() {
+        return subSubCategoria;
+    }
+
+    public void setSubSubCategoria(SubSubCategoria subSubCategoria) {
+        this.subSubCategoria = subSubCategoria;
     }
 }

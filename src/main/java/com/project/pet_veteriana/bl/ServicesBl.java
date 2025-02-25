@@ -5,6 +5,7 @@ import com.project.pet_veteriana.dto.ServicesDto;
 import com.project.pet_veteriana.entity.ImageS3;
 import com.project.pet_veteriana.entity.Providers;
 import com.project.pet_veteriana.entity.Services;
+import com.project.pet_veteriana.entity.SubSubCategoria;
 import com.project.pet_veteriana.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class ServicesBl {
     private TransactionHistoryRepository transactionHistoryRepository;
 
     @Autowired
+    private SubSubCategoriaRepository subSubCategoriaRepository;
+
+    @Autowired
     private ImagesS3Bl imagesS3Bl; // Manejo de imágenes en MinIO
 
     // Crear un servicio con imagen
@@ -42,19 +46,25 @@ public class ServicesBl {
         Providers provider = providersRepository.findById(servicesDto.getProviderId())
                 .orElseThrow(() -> new RuntimeException("Provider not found"));
 
-        // Subir imagen a MinIO y guardar los detalles
         ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
+
+        SubSubCategoria subSubCategoria = null;
+        if (servicesDto.getSubSubCategoriaId() != null) {
+            subSubCategoria = subSubCategoriaRepository.findById(servicesDto.getSubSubCategoriaId())
+                    .orElseThrow(() -> new IllegalArgumentException("SubSubCategoria no encontrada"));
+        }
 
         Services service = new Services();
         service.setServiceName(servicesDto.getServiceName());
         service.setPrice(servicesDto.getPrice());
         service.setDuration(servicesDto.getDuration());
         service.setDescription(servicesDto.getDescription());
-        service.setTipoAtencion(servicesDto.getTipoAtencion()); // Nuevo campo
+        service.setTipoAtencion(servicesDto.getTipoAtencion());
         service.setCreatedAt(LocalDateTime.now());
         service.setStatus(servicesDto.getStatus());
         service.setProvider(provider);
         service.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
+        service.setSubSubCategoria(subSubCategoria);
 
         Services savedService = servicesRepository.save(service);
         return mapToDto(savedService);
@@ -91,11 +101,18 @@ public class ServicesBl {
         Providers provider = providersRepository.findById(servicesDto.getProviderId())
                 .orElseThrow(() -> new RuntimeException("Provider not found"));
 
+        SubSubCategoria subSubCategoria = null;
+        if (servicesDto.getSubSubCategoriaId() != null) {
+            subSubCategoria = subSubCategoriaRepository.findById(servicesDto.getSubSubCategoriaId())
+                    .orElseThrow(() -> new IllegalArgumentException("SubSubCategoria no encontrada"));
+        }
+        service.setSubSubCategoria(subSubCategoria);
+
         service.setServiceName(servicesDto.getServiceName());
         service.setPrice(servicesDto.getPrice());
         service.setDuration(servicesDto.getDuration());
         service.setDescription(servicesDto.getDescription());
-        service.setTipoAtencion(servicesDto.getTipoAtencion()); // Nuevo campo
+        service.setTipoAtencion(servicesDto.getTipoAtencion());
         service.setStatus(servicesDto.getStatus());
         service.setProvider(provider);
 
@@ -198,7 +215,8 @@ public class ServicesBl {
                 service.getProvider().getProviderId(),
                 service.getImage() != null ? service.getImage().getImageId() : null,
                 imageUrl,
-                service.getTipoAtencion() // Nuevo campo
+                service.getTipoAtencion(),
+                service.getSubSubCategoria() != null ? service.getSubSubCategoria().getSubSubCategoriaId() : null
         );
     }
 }
