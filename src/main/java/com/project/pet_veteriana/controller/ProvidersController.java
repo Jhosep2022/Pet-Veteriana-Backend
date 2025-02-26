@@ -201,4 +201,25 @@ public class ProvidersController {
         ProvidersDto provider = providersBl.getProviderStoreById(providerId);
         return new ResponseEntity<>(ResponseDto.success(provider, "Provider store fetched successfully"), HttpStatus.OK);
     }
+
+    @GetMapping("/identify")
+    public ResponseDto<ProvidersDto> identifyProvider(
+            @RequestParam(required = false) Integer productId,
+            @RequestParam(required = false) Integer serviceId,
+            @RequestHeader("Authorization") String token) {
+
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            return ResponseDto.error("Unauthorized", HttpStatus.UNAUTHORIZED.value());
+        }
+
+        try {
+            ProvidersDto provider = providersBl.identifyProvider(productId, serviceId);
+            return ResponseDto.success(provider, "Provider identified successfully");
+        } catch (Exception e) {
+            return ResponseDto.error("Error identifying provider: " + e.getMessage(), HttpStatus.NOT_FOUND.value());
+        }
+    }
 }

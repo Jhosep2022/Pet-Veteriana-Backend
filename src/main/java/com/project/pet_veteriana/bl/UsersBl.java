@@ -81,6 +81,13 @@ public class UsersBl {
                 user.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
             }
 
+            // Verificar y actualizar el rol si se ha enviado uno nuevo
+            if (usersDto.getRolId() != null) {
+                Rol rol = rolRepository.findById(usersDto.getRolId())
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
+                user.setRol(rol);
+            }
+
             user.setName(usersDto.getName());
             user.setEmail(usersDto.getEmail());
             user.setPhoneNumber(usersDto.getPhoneNumber());

@@ -2,9 +2,7 @@ package com.project.pet_veteriana.bl;
 
 import com.project.pet_veteriana.dto.ProvidersDto;
 import com.project.pet_veteriana.dto.ImageS3Dto;
-import com.project.pet_veteriana.entity.Providers;
-import com.project.pet_veteriana.entity.Users;
-import com.project.pet_veteriana.entity.ImageS3;
+import com.project.pet_veteriana.entity.*;
 import com.project.pet_veteriana.repository.ProductsRepository;
 import com.project.pet_veteriana.repository.ProvidersRepository;
 import com.project.pet_veteriana.repository.ServicesRepository;
@@ -178,6 +176,32 @@ public class ProvidersBl {
         } else {
             throw new RuntimeException("Provider not found or inactive");
         }
+    }
+
+    public ProvidersDto identifyProvider(Integer productId, Integer serviceId) {
+        Providers provider = null;
+
+        if (productId != null) {
+            Optional<Products> product = productsRepository.findById(productId);
+            if (product.isPresent()) {
+                provider = product.get().getProvider();
+            }
+        }
+
+        if (serviceId != null && provider == null) {
+            Optional<Services> service = servicesRepository.findById(serviceId);
+            if (service.isPresent()) {
+                provider = service.get().getProvider();
+            }
+        }
+
+        if (provider == null) {
+            throw new RuntimeException("Provider not found for given product or service ID");
+        }
+
+        return new ProvidersDto(provider.getProviderId(), provider.getUser().getUserId(), provider.getName(),
+                provider.getDescription(), provider.getAddress(), null, provider.getRating(),
+                provider.getCreatedAt(), provider.getUpdatedAt(), provider.getStatus(), 0, 0, 0);
     }
 
 
