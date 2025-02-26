@@ -3,8 +3,10 @@ package com.project.pet_veteriana.bl;
 import com.project.pet_veteriana.dto.ImageS3Dto;
 import com.project.pet_veteriana.dto.UsersDto;
 import com.project.pet_veteriana.entity.ImageS3;
+import com.project.pet_veteriana.entity.Providers;
 import com.project.pet_veteriana.entity.Rol;
 import com.project.pet_veteriana.entity.Users;
+import com.project.pet_veteriana.repository.ProvidersRepository;
 import com.project.pet_veteriana.repository.RolRepository;
 import com.project.pet_veteriana.repository.UsersRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +28,9 @@ public class UsersBl {
 
     @Autowired
     private RolRepository rolRepository;
+
+    @Autowired
+    private ProvidersRepository providersRepository;
 
     // Crear usuario con imagen
     public UsersDto createUserWithImage(UsersDto usersDto, MultipartFile file) throws Exception {
@@ -150,17 +155,20 @@ public class UsersBl {
         usersRepository.save(user);
     }
 
-    // Mapeo de Users a UsersDto
     private UsersDto mapToDto(Users user) {
         String imageUrl = null;
         if (user.getImage() != null) {
             imageUrl = imagesS3Bl.generateFileUrl(user.getImage().getFileName());
         }
 
-        // Obtener providerId si el usuario es un vendedor
+        // Obtener providerId desde la tabla Providers si existe
         Integer providerId = null;
-        if (user.getRol() != null && user.getRol().getRolId() == 3) {
-            providerId = user.getUserId();
+        // Llamar al repositorio para verificar si el usuario tiene un proveedor asociado
+        Optional<Providers> provider = providersRepository.findByUser_UserId(user.getUserId());
+
+        // Si existe el proveedor, asignar el providerId
+        if (provider.isPresent()) {
+            providerId = provider.get().getProviderId(); // Aquí obtenemos el providerId desde la tabla Providers
         }
 
         return new UsersDto(
@@ -174,10 +182,12 @@ public class UsersBl {
                 user.getLastLogin(),
                 user.getCreatedAt(),
                 user.getStatus(),
-                user.getRol() != null ? user.getRol().getRolId() : null,
-                user.getImage() != null ? user.getImage().getImageId() : null,
-                imageUrl,
-                providerId
+                user.getRol() != null ? user.getRol().getRolId() : null,  // Si rolId no es null, pasamos el valor
+                user.getImage() != null ? user.getImage().getImageId() : null, // Obtener imageId
+                imageUrl,  // Si tiene imagen, asignar la URL
+                providerId // Asignamos el providerId si es un proveedor
         );
     }
+
+
 }
