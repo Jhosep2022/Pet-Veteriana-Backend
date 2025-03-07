@@ -6,9 +6,7 @@ import com.project.pet_veteriana.entity.ImageS3;
 import com.project.pet_veteriana.entity.Providers;
 import com.project.pet_veteriana.entity.Rol;
 import com.project.pet_veteriana.entity.Users;
-import com.project.pet_veteriana.repository.ProvidersRepository;
-import com.project.pet_veteriana.repository.RolRepository;
-import com.project.pet_veteriana.repository.UsersRepository;
+import com.project.pet_veteriana.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +30,12 @@ public class UsersBl {
     @Autowired
     private ProvidersRepository providersRepository;
 
+    @Autowired
+    private TransactionHistoryRepository transactionHistoryRepository;
+
+    @Autowired
+    private PetsRepository petsRepository;
+
     // Crear usuario con imagen
     public UsersDto createUserWithImage(UsersDto usersDto, MultipartFile file) throws Exception {
         // Obtener el rol correspondiente usando el rolId
@@ -49,7 +53,7 @@ public class UsersBl {
         user.setName(usersDto.getName());
         user.setEmail(usersDto.getEmail());
         user.setPhoneNumber(usersDto.getPhoneNumber());
-        user.setPassword(encryptedPassword); // Guardar la contraseña encriptada
+        user.setPassword(encryptedPassword);
         user.setLocation(usersDto.getLocation());
         user.setPreferredLanguage(usersDto.getPreferredLanguage());
         user.setStatus(usersDto.getStatus());
@@ -115,6 +119,14 @@ public class UsersBl {
         if (userOptional.isPresent()) {
             Users user = userOptional.get();
 
+            // Eliminar transacciones asociadas antes de borrar el usuario
+            transactionHistoryRepository.deleteByUser(user);
+
+            // Eliminar proveedores asociados antes de borrar el usuario
+            providersRepository.deleteByUser(user);
+
+            petsRepository.deleteByUser(user);
+
             // Desvincular la imagen antes de eliminarla
             if (user.getImage() != null) {
                 try {
@@ -122,17 +134,19 @@ public class UsersBl {
                 } catch (Exception e) {
                     throw new RuntimeException("Error deleting associated image from MinIO", e);
                 }
-                user.setImage(null); // IMPORTANTE: Desvincular la imagen antes de eliminar el usuario
+                user.setImage(null);
                 usersRepository.save(user); // Guardar la desvinculación antes de eliminar el usuario
             }
 
-            // Ahora eliminamos el usuario
+            // Finalmente, eliminamos el usuario
             usersRepository.delete(user);
             return true;
         }
 
         return false;
     }
+
+
 
 
 
