@@ -1,5 +1,7 @@
 package com.project.pet_veteriana.entity;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 
@@ -20,9 +22,11 @@ public class SprecialityProviders implements Serializable {
     private Specialty specialty;
 
     // Relación con Providers
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "provider_id", referencedColumnName = "provider_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Providers provider;
+
 
     public SprecialityProviders() {
     }

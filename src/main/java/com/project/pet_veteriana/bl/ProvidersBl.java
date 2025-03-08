@@ -3,12 +3,10 @@ package com.project.pet_veteriana.bl;
 import com.project.pet_veteriana.dto.ProvidersDto;
 import com.project.pet_veteriana.dto.ImageS3Dto;
 import com.project.pet_veteriana.entity.*;
-import com.project.pet_veteriana.repository.ProductsRepository;
-import com.project.pet_veteriana.repository.ProvidersRepository;
-import com.project.pet_veteriana.repository.ServicesRepository;
-import com.project.pet_veteriana.repository.UsersRepository;
+import com.project.pet_veteriana.repository.*;
 import com.project.pet_veteriana.config.JwtTokenProvider;
 import com.project.pet_veteriana.bl.ImagesS3Bl;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +37,12 @@ public class ProvidersBl {
 
     @Autowired
     private ServicesRepository servicesRepository;
+
+    @Autowired
+    private PromoCodesRepository promoCodesRepository;
+
+    @Autowired
+    private SprecialityProvidersRepository sprecialityProvidersRepository;
 
     @Autowired
     private ImagesS3Bl imagesS3Bl;
@@ -135,18 +139,30 @@ public class ProvidersBl {
         }
     }
 
-    // Eliminar Provider (Borrado lógico)
+    @Transactional
     public void deleteProvider(Integer id) {
-        Optional<Providers> provider = providersRepository.findById(id);
-        if (provider.isPresent()) {
-            Providers prov = provider.get();
-            prov.setStatus(false); // Cambiar el status a false en lugar de eliminar físicamente
-            providersRepository.save(prov);
-            logger.info("Provider marked as deleted for ID: {}", id);
+        Optional<Providers> providerOptional = providersRepository.findById(id);
+        if (providerOptional.isPresent()) {
+            Providers provider = providerOptional.get();
+
+            // Eliminar todas las relaciones en la tabla `spreciality_providers`
+            sprecialityProvidersRepository.deleteByProvider(provider);
+
+            // Eliminar todos los códigos promocionales asociados a este proveedor
+            List<PromoCodes> promoCodes = promoCodesRepository.findByProvider(provider);
+            for (PromoCodes promo : promoCodes) {
+                promoCodesRepository.delete(promo);
+            }
+
+            // Eliminar el proveedor de la base de datos
+            providersRepository.delete(provider);
+
+            logger.info("Provider deleted successfully for ID: {}", id);
         } else {
             throw new RuntimeException("Provider not found");
         }
     }
+
 
     public boolean existsByUserId(Integer userId) {
         return providersRepository.existsByUser_UserId(userId);

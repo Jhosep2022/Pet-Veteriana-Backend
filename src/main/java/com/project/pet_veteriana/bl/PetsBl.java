@@ -6,6 +6,7 @@ import com.project.pet_veteriana.entity.ImageS3;
 import com.project.pet_veteriana.entity.Pets;
 import com.project.pet_veteriana.entity.Users;
 import com.project.pet_veteriana.repository.PetsRepository;
+import com.project.pet_veteriana.repository.ReservationsRepository;
 import com.project.pet_veteriana.repository.UsersRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class PetsBl {
 
     @Autowired
     private ImagesS3Bl imagesS3Bl;
+
+    @Autowired
+    private ReservationsRepository reservationsRepository;
 
     // Crear una nueva mascota con imagen
     public PetsDto createPetWithImage(PetsDto petsDto, MultipartFile file) throws Exception {
@@ -104,10 +108,13 @@ public class PetsBl {
         if (petOptional.isPresent()) {
             Pets pet = petOptional.get();
 
-            petsRepository.deleteVaccinationSchedulesByPetId(petId);
+            // Eliminar todas las reservas asociadas a esta mascota antes de eliminarla
+            reservationsRepository.deleteByPet(pet);
 
+            // Ahora eliminamos la mascota
             petsRepository.delete(pet);
 
+            // Eliminar imagen si existe
             if (pet.getImage() != null) {
                 try {
                     imagesS3Bl.deleteFile(pet.getImage().getImageId());

@@ -1,6 +1,8 @@
 package com.project.pet_veteriana.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -45,7 +47,9 @@ public class PromoCodes implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "provider_id", referencedColumnName = "provider_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Providers provider;
+
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
