@@ -51,10 +51,17 @@ public class Providers implements Serializable {
     @Column(name = "reviews", nullable = true) // Nuevo campo
     private Integer reviews = 0;
 
+    @Column(name = "city", nullable = true, length = 100)
+    private String city;
+
+    @Column(name = "country", nullable = true, length = 100)
+    private String country;
+
+
     public Providers() {
     }
 
-    public Providers(Integer providerId, Users user, String name, String description, String address, ImageS3 image, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status, Integer reviews) {
+    public Providers(Integer providerId, Users user, String name, String description, String address, ImageS3 image, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status, Integer reviews, String city, String country) {
         this.providerId = providerId;
         this.user = user;
         this.name = name;
@@ -66,6 +73,8 @@ public class Providers implements Serializable {
         this.updatedAt = updatedAt;
         this.status = status;
         this.reviews = reviews;
+        this.city = city;
+        this.country = country;
     }
 
     public Integer getProviderId() {
@@ -154,5 +163,21 @@ public class Providers implements Serializable {
 
     public void setReviews(Integer reviews) {
         this.reviews = reviews;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 }

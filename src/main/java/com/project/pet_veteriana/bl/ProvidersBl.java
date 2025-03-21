@@ -215,9 +215,24 @@ public class ProvidersBl {
             throw new RuntimeException("Provider not found for given product or service ID");
         }
 
-        return new ProvidersDto(provider.getProviderId(), provider.getUser().getUserId(), provider.getName(),
-                provider.getDescription(), provider.getAddress(), null, provider.getRating(),
-                provider.getCreatedAt(), provider.getUpdatedAt(), provider.getStatus(), 0, 0, 0);
+        return new ProvidersDto(
+                provider.getProviderId(),
+                provider.getUser().getUserId(),
+                provider.getName(),
+                provider.getDescription(),
+                provider.getAddress(),
+                null,
+                provider.getRating(),
+                provider.getCreatedAt(),
+                provider.getUpdatedAt(),
+                provider.getStatus(),
+                0,
+                0,
+                provider.getReviews(),
+                provider.getCity(),
+                provider.getCountry()
+        );
+
     }
 
 
@@ -245,8 +260,11 @@ public class ProvidersBl {
                 provider.getStatus(),
                 productCount,
                 serviceCount,
-                provider.getReviews()
+                provider.getReviews(),
+                provider.getCity(),      // <--- Nuevo parámetro
+                provider.getCountry()    // <--- Nuevo parámetro
         );
     }
+
 
 }

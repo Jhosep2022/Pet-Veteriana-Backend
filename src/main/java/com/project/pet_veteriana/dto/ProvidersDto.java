@@ -17,11 +17,17 @@ public class ProvidersDto {
     private Integer productCount;
     private Integer serviceCount;
     private Integer reviews;
+    private String city;
+    private String country;
+
 
     public ProvidersDto() {
     }
 
-    public ProvidersDto(Integer providerId, Integer userId, String name, String description, String address, String imageUrl, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status, Integer productCount, Integer serviceCount, Integer reviews) {
+    public ProvidersDto(Integer providerId, Integer userId, String name, String description, String address,
+                        String imageUrl, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt,
+                        Boolean status, Integer productCount, Integer serviceCount, Integer reviews,
+                        String city, String country) {
         this.providerId = providerId;
         this.userId = userId;
         this.name = name;
@@ -35,7 +41,10 @@ public class ProvidersDto {
         this.productCount = productCount;
         this.serviceCount = serviceCount;
         this.reviews = reviews;
+        this.city = city;
+        this.country = country;
     }
+
 
     public Integer getProviderId() {
         return providerId;
@@ -140,4 +149,21 @@ public class ProvidersDto {
     public void setReviews(Integer reviews) {
         this.reviews = reviews;
     }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
 }

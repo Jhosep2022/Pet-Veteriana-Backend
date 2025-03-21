@@ -216,7 +216,9 @@ public class ServicesBl {
                 service.getImage() != null ? service.getImage().getImageId() : null,
                 imageUrl,
                 service.getTipoAtencion(),
-                service.getSubSubCategoria() != null ? service.getSubSubCategoria().getSubSubCategoriaId() : null
+                service.getSubSubCategoria() != null ? service.getSubSubCategoria().getSubSubCategoriaId() : null,
+                service.getIsOnSale()
         );
     }
+
 }

@@ -53,6 +53,9 @@ public class Products implements Serializable {
     @JoinColumn(name = "sub_sub_categoria_id", nullable = true)
     private SubSubCategoria subSubCategoria;
 
+    @Column(name = "is_on_sale", nullable = false)
+    private Boolean isOnSale = false;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -61,7 +64,7 @@ public class Products implements Serializable {
     public Products() {
     }
 
-    public Products(Integer productId, String name, String description, Double price, Integer stock, LocalDateTime createdAt, Boolean status, Providers provider, Category category, ImageS3 image, SubSubCategoria subSubCategoria) {
+    public Products(Integer productId, String name, String description, Double price, Integer stock, LocalDateTime createdAt, Boolean status, Providers provider, Category category, ImageS3 image, SubSubCategoria subSubCategoria, Boolean isOnSale) {
         this.productId = productId;
         this.name = name;
         this.description = description;
@@ -73,6 +76,7 @@ public class Products implements Serializable {
         this.category = category;
         this.image = image;
         this.subSubCategoria = subSubCategoria;
+        this.isOnSale = isOnSale;
     }
 
     public Integer getProductId() {
@@ -161,5 +165,14 @@ public class Products implements Serializable {
 
     public void setSubSubCategoria(SubSubCategoria subSubCategoria) {
         this.subSubCategoria = subSubCategoria;
+    }
+    // Getter
+    public Boolean getIsOnSale() {
+        return isOnSale;
+    }
+
+    // Setter
+    public void setIsOnSale(Boolean isOnSale) {
+        this.isOnSale = isOnSale;
     }
 }

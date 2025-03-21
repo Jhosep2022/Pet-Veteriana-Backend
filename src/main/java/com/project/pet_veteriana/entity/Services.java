@@ -48,12 +48,14 @@ public class Services implements Serializable {
     @JoinColumn(name = "sub_sub_categoria_id", nullable = true)
     private SubSubCategoria subSubCategoria;
 
+    @Column(name = "is_on_sale", nullable = false)
+    private Boolean isOnSale = false;
+
+
     public Services() {
     }
 
-    public Services(Integer serviceId, String serviceName, Double price, Integer duration, String description,
-                    String tipoAtencion, LocalDateTime createdAt, Boolean status, Providers provider,
-                    ImageS3 image, SubSubCategoria subSubCategoria) {
+    public Services(Integer serviceId, String serviceName, Double price, Integer duration, String description, String tipoAtencion, LocalDateTime createdAt, Boolean status, Providers provider, ImageS3 image, SubSubCategoria subSubCategoria, Boolean isOnSale) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.price = price;
@@ -65,6 +67,7 @@ public class Services implements Serializable {
         this.provider = provider;
         this.image = image;
         this.subSubCategoria = subSubCategoria;
+        this.isOnSale = isOnSale;
     }
 
     public Integer getServiceId() {
@@ -153,5 +156,13 @@ public class Services implements Serializable {
 
     public void setSubSubCategoria(SubSubCategoria subSubCategoria) {
         this.subSubCategoria = subSubCategoria;
+    }
+
+    public Boolean getIsOnSale() {
+        return isOnSale;
+    }
+
+    public void setIsOnSale(Boolean isOnSale) {
+        this.isOnSale = isOnSale;
     }
 }

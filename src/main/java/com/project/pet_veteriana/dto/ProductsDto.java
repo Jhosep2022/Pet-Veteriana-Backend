@@ -15,14 +15,16 @@ public class ProductsDto {
     private Integer categoryId;
     private Integer imageId;
     private String imageUrl;
-    private Integer subSubCategoriaId; // Campo opcional para sub-subcategoría
+    private Integer subSubCategoriaId;
+    private Boolean isOnSale;
+
 
     public ProductsDto() {
     }
 
     public ProductsDto(Integer productId, String name, String description, Double price, Integer stock,
                        LocalDateTime createdAt, Boolean status, Integer providerId, Integer categoryId,
-                       Integer imageId, String imageUrl, Integer subSubCategoriaId) {
+                       Integer imageId, String imageUrl, Integer subSubCategoriaId, Boolean isOnSale) {
         this.productId = productId;
         this.name = name;
         this.description = description;
@@ -35,6 +37,15 @@ public class ProductsDto {
         this.imageId = imageId;
         this.imageUrl = imageUrl;
         this.subSubCategoriaId = subSubCategoriaId;
+        this.isOnSale = isOnSale;
+    }
+
+    public Boolean getIsOnSale() {
+        return isOnSale;
+    }
+
+    public void setIsOnSale(Boolean isOnSale) {
+        this.isOnSale = isOnSale;
     }
 
     public Integer getProductId() {

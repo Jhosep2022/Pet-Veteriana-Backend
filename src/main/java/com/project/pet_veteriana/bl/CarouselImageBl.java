@@ -78,7 +78,7 @@ public class CarouselImageBl {
     // Obtener las últimas 4 imágenes subidas
     public List<CarouselImageDto> getAllCarouselImages() {
         // Últimos 4 registros por ID descendente
-        List<CarouselImage> images = carouselImageRepository.findAllByOrderByIdDesc(PageRequest.of(0, 4));
+        List<CarouselImage> images = carouselImageRepository.findAllByOrderByIdDesc(PageRequest.of(0, 7));
         return images.stream()
                 .map(img -> new CarouselImageDto(
                         img.getId(),

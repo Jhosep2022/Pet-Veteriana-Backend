@@ -228,7 +228,8 @@ public class ProductsBl {
                 product.getCategory().getCategoryId(),
                 product.getImage() != null ? product.getImage().getImageId() : null,
                 imageUrl,
-                product.getSubSubCategoria() != null ? product.getSubSubCategoria().getSubSubCategoriaId() : null
+                product.getSubSubCategoria() != null ? product.getSubSubCategoria().getSubSubCategoriaId() : null,
+                product.getIsOnSale()
         );
     }
 }

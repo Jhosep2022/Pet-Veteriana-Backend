@@ -15,14 +15,15 @@ public class ServicesDto {
     private Integer imageId;
     private String imageUrl;
     private String tipoAtencion;
-    private Integer subSubCategoriaId; // Nuevo campo opcional
+    private Integer subSubCategoriaId;
+    private Boolean isOnSale;
 
     public ServicesDto() {
     }
 
     public ServicesDto(Integer serviceId, String serviceName, Double price, Integer duration, String description,
                        LocalDateTime createdAt, Boolean status, Integer providerId, Integer imageId, String imageUrl,
-                       String tipoAtencion, Integer subSubCategoriaId) {
+                       String tipoAtencion, Integer subSubCategoriaId, Boolean isOnSale) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.price = price;
@@ -35,6 +36,7 @@ public class ServicesDto {
         this.imageUrl = imageUrl;
         this.tipoAtencion = tipoAtencion;
         this.subSubCategoriaId = subSubCategoriaId;
+        this.isOnSale = isOnSale;
     }
 
     public Integer getServiceId() { return serviceId; }
@@ -72,4 +74,13 @@ public class ServicesDto {
 
     public Integer getSubSubCategoriaId() { return subSubCategoriaId; }
     public void setSubSubCategoriaId(Integer subSubCategoriaId) { this.subSubCategoriaId = subSubCategoriaId; }
+
+    public Boolean getIsOnSale() {
+        return isOnSale;
+    }
+
+    public void setIsOnSale(Boolean isOnSale) {
+        this.isOnSale = isOnSale;
+    }
+
 }
