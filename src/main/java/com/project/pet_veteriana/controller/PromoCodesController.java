@@ -111,4 +111,35 @@ public class PromoCodesController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+    // Obtener el número de usos actuales de un código promocional
+    @GetMapping("/{id}/uses")
+    public ResponseEntity<ResponseDto<Integer>> getCurrentUses(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Acceso no autorizado con el token: {}", token);
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        Integer currentUses = promoCodesBl.getCurrentUses(id);
+        return new ResponseEntity<>(ResponseDto.success(currentUses, "Usos actuales del código obtenidos correctamente"), HttpStatus.OK);
+    }
+
+    // Incrementar el contador de usos del código promocional
+    @PutMapping("/{id}/use")
+    public ResponseEntity<ResponseDto<PromoCodesDto>> usePromoCode(@PathVariable Integer id, @RequestHeader("Authorization") String token) {
+        String extractedToken = token.replace("Bearer ", "");
+        String username = jwtTokenProvider.extractUsername(extractedToken);
+
+        if (username == null || !jwtTokenProvider.validateToken(extractedToken, username)) {
+            logger.error("Acceso no autorizado con el token: {}", token);
+            return new ResponseEntity<>(ResponseDto.error("Unauthorized", 401), HttpStatus.UNAUTHORIZED);
+        }
+
+        PromoCodesDto updatedPromoCode = promoCodesBl.incrementPromoCodeUsage(id);
+        return new ResponseEntity<>(ResponseDto.success(updatedPromoCode, "Uso del código registrado correctamente"), HttpStatus.OK);
+    }
+
 }

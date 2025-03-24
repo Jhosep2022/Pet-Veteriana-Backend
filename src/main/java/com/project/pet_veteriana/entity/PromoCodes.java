@@ -54,10 +54,13 @@ public class PromoCodes implements Serializable {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     public PromoCodes() {
     }
 
-    public PromoCodes(Integer promoId, String code, String description, String discountType, Double discountValue, Integer maxUses, Integer currentUses, LocalDateTime startDate, LocalDateTime endDate, Boolean isActive, Providers provider, LocalDateTime createdAt) {
+    public PromoCodes(Integer promoId, String code, String description, String discountType, Double discountValue, Integer maxUses, Integer currentUses, LocalDateTime startDate, LocalDateTime endDate, Boolean isActive, Providers provider, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.promoId = promoId;
         this.code = code;
         this.description = description;
@@ -70,6 +73,7 @@ public class PromoCodes implements Serializable {
         this.isActive = isActive;
         this.provider = provider;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public Integer getPromoId() {
@@ -166,5 +170,13 @@ public class PromoCodes implements Serializable {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

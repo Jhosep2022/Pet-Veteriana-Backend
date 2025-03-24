@@ -108,6 +108,38 @@ public class PromoCodesBl {
         return false;
     }
 
+    // Obtener el número de usos actuales de un código promocional
+    public Integer getCurrentUses(Integer promoId) {
+        Optional<PromoCodes> promoCodeOptional = promoCodesRepository.findById(promoId);
+        if (promoCodeOptional.isEmpty()) {
+            throw new IllegalArgumentException("Código promocional no encontrado");
+        }
+        return promoCodeOptional.get().getCurrentUses();
+    }
+
+    // Incrementar el contador de usos de un código promocional
+    public PromoCodesDto incrementPromoCodeUsage(Integer promoId) {
+        Optional<PromoCodes> promoCodeOptional = promoCodesRepository.findById(promoId);
+        if (promoCodeOptional.isEmpty()) {
+            throw new IllegalArgumentException("Código promocional no encontrado");
+        }
+
+        PromoCodes promoCode = promoCodeOptional.get();
+        int current = promoCode.getCurrentUses();
+
+        if (current >= promoCode.getMaxUses()) {
+            throw new IllegalStateException("Este código ya alcanzó su máximo de usos.");
+        }
+
+        promoCode.setCurrentUses(current + 1);
+        promoCode.setUpdatedAt(LocalDateTime.now()); // Si tienes esta columna
+        PromoCodes updatedPromoCode = promoCodesRepository.save(promoCode);
+
+        return convertToDto(updatedPromoCode);
+    }
+
+
+
     // Convertir entidad a DTO
     private PromoCodesDto convertToDto(PromoCodes promoCode) {
         return new PromoCodesDto(
