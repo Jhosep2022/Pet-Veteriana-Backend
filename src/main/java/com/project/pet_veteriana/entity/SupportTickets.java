@@ -20,8 +20,8 @@ public class SupportTickets implements Serializable {
     @Column(name = "description", nullable = false, length = 150)
     private String description;
 
-    @Column(name = "status", nullable = false)
-    private Boolean status;
+    @Column(name = "status", nullable = false, length = 20)
+    private String status;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
@@ -38,7 +38,7 @@ public class SupportTickets implements Serializable {
     public SupportTickets() {
     }
 
-    public SupportTickets(Integer supportTicketsId, String subject, String description, Boolean status, LocalDateTime updatedAt, LocalDateTime createdAt, Users user) {
+    public SupportTickets(Integer supportTicketsId, String subject, String description, String status, LocalDateTime updatedAt, LocalDateTime createdAt, Users user) {
         this.supportTicketsId = supportTicketsId;
         this.subject = subject;
         this.description = description;
@@ -72,11 +72,11 @@ public class SupportTickets implements Serializable {
         this.description = description;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

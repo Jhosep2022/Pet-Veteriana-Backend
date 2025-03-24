@@ -22,11 +22,17 @@ public class SupportTicketsBl {
     @Autowired
     private UsersRepository usersRepository;
 
+    private final List<String> VALID_STATUSES = List.of("Nuevo", "Proceso", "Resuelto");
+
     // Crear un nuevo ticket de soporte
     public SupportTicketsDto createTicket(SupportTicketsDto supportTicketsDto) {
         Optional<Users> userOptional = usersRepository.findById(supportTicketsDto.getUserId());
         if (userOptional.isEmpty()) {
             throw new IllegalArgumentException("Usuario no encontrado");
+        }
+
+        if (!VALID_STATUSES.contains(supportTicketsDto.getStatus())) {
+            throw new IllegalArgumentException("Estado inválido. Debe ser: Nuevo, Proceso o Resuelto.");
         }
 
         SupportTickets ticket = new SupportTickets();
@@ -61,6 +67,10 @@ public class SupportTicketsBl {
         Optional<SupportTickets> ticketOptional = supportTicketsRepository.findById(id);
         if (ticketOptional.isEmpty()) {
             throw new IllegalArgumentException("Ticket no encontrado");
+        }
+
+        if (!VALID_STATUSES.contains(supportTicketsDto.getStatus())) {
+            throw new IllegalArgumentException("Estado inválido. Debe ser: Nuevo, Proceso o Resuelto.");
         }
 
         SupportTickets ticket = ticketOptional.get();

@@ -7,7 +7,7 @@ public class SupportTicketsDto {
     private Integer supportTicketsId;
     private String subject;
     private String description;
-    private Boolean status;
+    private String status;
     private LocalDateTime updatedAt;
     private LocalDateTime createdAt;
     private Integer userId;
@@ -15,7 +15,7 @@ public class SupportTicketsDto {
     public SupportTicketsDto() {
     }
 
-    public SupportTicketsDto(Integer supportTicketsId, String subject, String description, Boolean status, LocalDateTime updatedAt, LocalDateTime createdAt, Integer userId) {
+    public SupportTicketsDto(Integer supportTicketsId, String subject, String description, String status, LocalDateTime updatedAt, LocalDateTime createdAt, Integer userId) {
         this.supportTicketsId = supportTicketsId;
         this.subject = subject;
         this.description = description;
@@ -49,11 +49,11 @@ public class SupportTicketsDto {
         this.description = description;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
