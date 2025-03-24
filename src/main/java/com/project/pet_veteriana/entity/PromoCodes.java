@@ -46,7 +46,7 @@ public class PromoCodes implements Serializable {
     private Boolean isActive;
 
     @ManyToOne
-    @JoinColumn(name = "provider_id", referencedColumnName = "provider_id", nullable = false)
+    @JoinColumn(name = "provider_id", referencedColumnName = "provider_id", nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Providers provider;
 

@@ -24,9 +24,13 @@ public class PromoCodesBl {
 
     // Crear un nuevo código promocional
     public PromoCodesDto createPromoCode(PromoCodesDto promoCodesDto) {
-        Optional<Providers> providerOptional = providersRepository.findById(promoCodesDto.getProviderId());
-        if (providerOptional.isEmpty()) {
-            throw new IllegalArgumentException("Proveedor no encontrado");
+        Providers provider = null;
+        if (promoCodesDto.getProviderId() != null) {
+            Optional<Providers> providerOptional = providersRepository.findById(promoCodesDto.getProviderId());
+            if (providerOptional.isEmpty()) {
+                throw new IllegalArgumentException("Proveedor no encontrado con ID: " + promoCodesDto.getProviderId());
+            }
+            provider = providerOptional.get();
         }
 
         PromoCodes promoCode = new PromoCodes();
@@ -39,7 +43,7 @@ public class PromoCodesBl {
         promoCode.setStartDate(promoCodesDto.getStartDate());
         promoCode.setEndDate(promoCodesDto.getEndDate());
         promoCode.setActive(promoCodesDto.getActive());
-        promoCode.setProvider(providerOptional.get());
+        promoCode.setProvider(provider); // puede ser null
         promoCode.setCreatedAt(LocalDateTime.now());
 
         PromoCodes savedPromoCode = promoCodesRepository.save(promoCode);
@@ -69,6 +73,16 @@ public class PromoCodesBl {
         }
 
         PromoCodes promoCode = promoCodeOptional.get();
+
+        Providers provider = null;
+        if (promoCodesDto.getProviderId() != null) {
+            Optional<Providers> providerOptional = providersRepository.findById(promoCodesDto.getProviderId());
+            if (providerOptional.isEmpty()) {
+                throw new IllegalArgumentException("Proveedor no encontrado con ID: " + promoCodesDto.getProviderId());
+            }
+            provider = providerOptional.get();
+        }
+
         promoCode.setCode(promoCodesDto.getCode());
         promoCode.setDescription(promoCodesDto.getDescription());
         promoCode.setDiscountType(promoCodesDto.getDiscountType());
@@ -79,6 +93,7 @@ public class PromoCodesBl {
         promoCode.setEndDate(promoCodesDto.getEndDate());
         promoCode.setActive(promoCodesDto.getActive());
         promoCode.setCreatedAt(promoCodesDto.getCreatedAt());
+        promoCode.setProvider(provider); // puede ser null o actualizado
 
         PromoCodes updatedPromoCode = promoCodesRepository.save(promoCode);
         return convertToDto(updatedPromoCode);
@@ -106,7 +121,7 @@ public class PromoCodesBl {
                 promoCode.getStartDate(),
                 promoCode.getEndDate(),
                 promoCode.getActive(),
-                promoCode.getProvider().getProviderId(),
+                promoCode.getProvider() != null ? promoCode.getProvider().getProviderId() : null,
                 promoCode.getCreatedAt()
         );
     }
