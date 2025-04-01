@@ -5,6 +5,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -46,6 +47,12 @@ public class Pets implements Serializable {
     @Column(name = "behavior_notes", length = 250)
     private String behaviorNotes;
 
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
+
+    @Column(name = "species", nullable = false, length = 100)
+    private String species;
+
     // Relación con Users
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
@@ -60,7 +67,8 @@ public class Pets implements Serializable {
     public Pets() {
     }
 
-    public Pets(Integer petId, String petName, String petBreed, String petAge, LocalDateTime createdAt, Double weight, Double height, String gender, String allergies, String behaviorNotes, Users user, ImageS3 image) {
+
+    public Pets(Integer petId, String petName, String petBreed, String petAge, LocalDateTime createdAt, Double weight, Double height, String gender, String allergies, String behaviorNotes, LocalDate birthDate, String species, Users user, ImageS3 image) {
         this.petId = petId;
         this.petName = petName;
         this.petBreed = petBreed;
@@ -71,6 +79,8 @@ public class Pets implements Serializable {
         this.gender = gender;
         this.allergies = allergies;
         this.behaviorNotes = behaviorNotes;
+        this.birthDate = birthDate;
+        this.species = species;
         this.user = user;
         this.image = image;
     }
@@ -153,6 +163,22 @@ public class Pets implements Serializable {
 
     public void setBehaviorNotes(String behaviorNotes) {
         this.behaviorNotes = behaviorNotes;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
     }
 
     public Users getUser() {

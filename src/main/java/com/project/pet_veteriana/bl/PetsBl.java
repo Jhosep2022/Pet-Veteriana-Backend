@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -48,6 +49,8 @@ public class PetsBl {
         pet.setPetName(petsDto.getPetName());
         pet.setPetBreed(petsDto.getPetBreed());
         pet.setPetAge(petsDto.getPetAge());
+        pet.setBirthDate(petsDto.getBirthDate());
+        pet.setSpecies(petsDto.getSpecies());
         pet.setWeight(petsDto.getWeight());
         pet.setHeight(petsDto.getHeight());
         pet.setGender(petsDto.getGender());
@@ -91,6 +94,8 @@ public class PetsBl {
         pet.setPetName(petsDto.getPetName());
         pet.setPetBreed(petsDto.getPetBreed());
         pet.setPetAge(petsDto.getPetAge());
+        pet.setBirthDate(petsDto.getBirthDate());
+        pet.setSpecies(petsDto.getSpecies());
         pet.setWeight(petsDto.getWeight());
         pet.setHeight(petsDto.getHeight());
         pet.setGender(petsDto.getGender());
@@ -129,16 +134,11 @@ public class PetsBl {
         return false;
     }
 
-
-
-
-
     // Obtener todas las mascotas por ID de usuario
     public List<PetsDto> getPetsByUserId(Integer userId) {
         List<Pets> pets = petsRepository.findByUserId(userId);
         return pets.stream().map(this::convertToDto).collect(Collectors.toList());
     }
-
 
     // Convertir entidad a DTO
     private PetsDto convertToDto(Pets pet) {
@@ -161,8 +161,10 @@ public class PetsBl {
                 pet.getBehaviorNotes(),
                 pet.getUser().getUserId(),
                 pet.getImage() != null ? pet.getImage().getImageId() : null,
-                imageUrl
+                imageUrl,
+                pet.getBirthDate(),
+                pet.getSpecies()
         );
-    }
 
+    }
 }

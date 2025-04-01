@@ -1,5 +1,6 @@
 package com.project.pet_veteriana.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class PetsDto {
@@ -16,12 +17,15 @@ public class PetsDto {
     private String behaviorNotes;
     private Integer userId;
     private Integer imageId;
-    private String imageUrl; // Nuevo campo para el enlace de la imagen
+    private String imageUrl;
+    private LocalDate birthDate;
+    private String species;
+
 
     public PetsDto() {
     }
 
-    public PetsDto(Integer petId, String petName, String petBreed, String petAge, LocalDateTime createdAt, Double weight, Double height, String gender, String allergies, String behaviorNotes, Integer userId, Integer imageId, String imageUrl) {
+    public PetsDto(Integer petId, String petName, String petBreed, String petAge, LocalDateTime createdAt, Double weight, Double height, String gender, String allergies, String behaviorNotes, Integer userId, Integer imageId, String imageUrl, LocalDate birthDate, String species) {
         this.petId = petId;
         this.petName = petName;
         this.petBreed = petBreed;
@@ -34,10 +38,11 @@ public class PetsDto {
         this.behaviorNotes = behaviorNotes;
         this.userId = userId;
         this.imageId = imageId;
-        this.imageUrl = imageUrl; // Asignar el enlace de la imagen
+        this.imageUrl = imageUrl;
+        this.birthDate = birthDate;
+        this.species = species;
     }
 
-    // Getters y Setters
     public Integer getPetId() {
         return petId;
     }
@@ -140,5 +145,21 @@ public class PetsDto {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
     }
 }
