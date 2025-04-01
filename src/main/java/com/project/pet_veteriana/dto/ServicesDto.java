@@ -17,13 +17,12 @@ public class ServicesDto {
     private String tipoAtencion;
     private Integer subSubCategoriaId;
     private Boolean isOnSale;
+    private Integer categoryId;
 
     public ServicesDto() {
     }
 
-    public ServicesDto(Integer serviceId, String serviceName, Double price, Integer duration, String description,
-                       LocalDateTime createdAt, Boolean status, Integer providerId, Integer imageId, String imageUrl,
-                       String tipoAtencion, Integer subSubCategoriaId, Boolean isOnSale) {
+    public ServicesDto(Integer serviceId, String serviceName, Double price, Integer duration, String description, LocalDateTime createdAt, Boolean status, Integer providerId, Integer imageId, String imageUrl, String tipoAtencion, Integer subSubCategoriaId, Boolean isOnSale, Integer categoryId) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.price = price;
@@ -37,50 +36,118 @@ public class ServicesDto {
         this.tipoAtencion = tipoAtencion;
         this.subSubCategoriaId = subSubCategoriaId;
         this.isOnSale = isOnSale;
+        this.categoryId = categoryId;
     }
 
-    public Integer getServiceId() { return serviceId; }
-    public void setServiceId(Integer serviceId) { this.serviceId = serviceId; }
+    public Integer getServiceId() {
+        return serviceId;
+    }
 
-    public String getServiceName() { return serviceName; }
-    public void setServiceName(String serviceName) { this.serviceName = serviceName; }
+    public void setServiceId(Integer serviceId) {
+        this.serviceId = serviceId;
+    }
 
-    public Double getPrice() { return price; }
-    public void setPrice(Double price) { this.price = price; }
+    public String getServiceName() {
+        return serviceName;
+    }
 
-    public Integer getDuration() { return duration; }
-    public void setDuration(Integer duration) { this.duration = duration; }
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public Double getPrice() {
+        return price;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 
-    public Boolean getStatus() { return status; }
-    public void setStatus(Boolean status) { this.status = status; }
+    public Integer getDuration() {
+        return duration;
+    }
 
-    public Integer getProviderId() { return providerId; }
-    public void setProviderId(Integer providerId) { this.providerId = providerId; }
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
 
-    public Integer getImageId() { return imageId; }
-    public void setImageId(Integer imageId) { this.imageId = imageId; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public String getTipoAtencion() { return tipoAtencion; }
-    public void setTipoAtencion(String tipoAtencion) { this.tipoAtencion = tipoAtencion; }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-    public Integer getSubSubCategoriaId() { return subSubCategoriaId; }
-    public void setSubSubCategoriaId(Integer subSubCategoriaId) { this.subSubCategoriaId = subSubCategoriaId; }
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
-    public Boolean getIsOnSale() {
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(Boolean status) {
+        this.status = status;
+    }
+
+    public Integer getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(Integer providerId) {
+        this.providerId = providerId;
+    }
+
+    public Integer getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(Integer imageId) {
+        this.imageId = imageId;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getTipoAtencion() {
+        return tipoAtencion;
+    }
+
+    public void setTipoAtencion(String tipoAtencion) {
+        this.tipoAtencion = tipoAtencion;
+    }
+
+    public Integer getSubSubCategoriaId() {
+        return subSubCategoriaId;
+    }
+
+    public void setSubSubCategoriaId(Integer subSubCategoriaId) {
+        this.subSubCategoriaId = subSubCategoriaId;
+    }
+
+    public Boolean getOnSale() {
         return isOnSale;
     }
 
-    public void setIsOnSale(Boolean isOnSale) {
-        this.isOnSale = isOnSale;
+    public void setOnSale(Boolean onSale) {
+        isOnSale = onSale;
     }
 
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
 }

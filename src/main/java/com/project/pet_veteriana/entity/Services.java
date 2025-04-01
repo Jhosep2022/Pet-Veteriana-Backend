@@ -48,6 +48,10 @@ public class Services implements Serializable {
     @JoinColumn(name = "sub_sub_categoria_id", nullable = true)
     private SubSubCategoria subSubCategoria;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id", nullable = true)
+    private Category category;
+
     @Column(name = "is_on_sale", nullable = false)
     private Boolean isOnSale = false;
 
@@ -55,7 +59,7 @@ public class Services implements Serializable {
     public Services() {
     }
 
-    public Services(Integer serviceId, String serviceName, Double price, Integer duration, String description, String tipoAtencion, LocalDateTime createdAt, Boolean status, Providers provider, ImageS3 image, SubSubCategoria subSubCategoria, Boolean isOnSale) {
+    public Services(Integer serviceId, String serviceName, Double price, Integer duration, String description, String tipoAtencion, LocalDateTime createdAt, Boolean status, Providers provider, ImageS3 image, SubSubCategoria subSubCategoria, Category category, Boolean isOnSale) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.price = price;
@@ -67,6 +71,7 @@ public class Services implements Serializable {
         this.provider = provider;
         this.image = image;
         this.subSubCategoria = subSubCategoria;
+        this.category = category;
         this.isOnSale = isOnSale;
     }
 
@@ -158,11 +163,20 @@ public class Services implements Serializable {
         this.subSubCategoria = subSubCategoria;
     }
 
-    public Boolean getIsOnSale() {
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Boolean getOnSale() {
         return isOnSale;
     }
 
-    public void setIsOnSale(Boolean isOnSale) {
-        this.isOnSale = isOnSale;
+
+    public void setOnSale(Boolean onSale) {
+        isOnSale = onSale;
     }
 }

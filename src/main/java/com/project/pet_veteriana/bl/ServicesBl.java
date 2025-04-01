@@ -217,8 +217,11 @@ public class ServicesBl {
                 imageUrl,
                 service.getTipoAtencion(),
                 service.getSubSubCategoria() != null ? service.getSubSubCategoria().getSubSubCategoriaId() : null,
-                service.getIsOnSale()
+                service.getOnSale(),
+                service.getCategory() != null ? service.getCategory().getCategoryId() : null
+
         );
+
     }
 
 }
