@@ -109,6 +109,7 @@ public class ProductsBl {
         product.setPrice(productsDto.getPrice());
         product.setStock(productsDto.getStock());
         product.setStatus(productsDto.getStatus());
+        product.setIsOnSale(productsDto.getIsOnSale());
 
         SubSubCategoria subSubCategoria = null;
         if (productsDto.getSubSubCategoriaId() != null) {
@@ -120,6 +121,7 @@ public class ProductsBl {
         Products updatedProduct = productsRepository.save(product);
         return Optional.of(convertToDto(updatedProduct));
     }
+
 
     // Eliminar un producto
     @Transactional

@@ -57,11 +57,14 @@ public class Providers implements Serializable {
     @Column(name = "country", nullable = true, length = 100)
     private String country;
 
+    @Column(name = "verified", nullable = false)
+    private Boolean verified = false;
+
 
     public Providers() {
     }
 
-    public Providers(Integer providerId, Users user, String name, String description, String address, ImageS3 image, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status, Integer reviews, String city, String country) {
+    public Providers(Integer providerId, Users user, String name, String description, String address, ImageS3 image, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt, Boolean status, Integer reviews, String city, String country, Boolean verified) {
         this.providerId = providerId;
         this.user = user;
         this.name = name;
@@ -75,6 +78,7 @@ public class Providers implements Serializable {
         this.reviews = reviews;
         this.city = city;
         this.country = country;
+        this.verified = verified;
     }
 
     public Integer getProviderId() {
@@ -179,5 +183,13 @@ public class Providers implements Serializable {
 
     public void setCountry(String country) {
         this.country = country;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
     }
 }

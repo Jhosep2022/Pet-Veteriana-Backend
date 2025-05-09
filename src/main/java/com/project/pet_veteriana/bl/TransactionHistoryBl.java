@@ -49,6 +49,9 @@ public class TransactionHistoryBl {
 
         TransactionHistory transaction = new TransactionHistory();
         transaction.setTotalAmount(dto.getTotalAmount());
+        transaction.setQuantity(dto.getQuantity());
+        transaction.setAmountPerUnit(dto.getAmountPerUnit());
+        transaction.setDetail(dto.getDetail());
         transaction.setStatus("pendiente");
         transaction.setCreatedAt(LocalDateTime.now());
         transaction.setUser(user);
@@ -58,7 +61,6 @@ public class TransactionHistoryBl {
         TransactionHistory savedTransaction = transactionHistoryRepository.save(transaction);
         return convertToDto(savedTransaction);
     }
-
 
     public List<TransactionHistoryDto> getAllTransactionHistories() {
         return transactionHistoryRepository.findAll()
@@ -92,19 +94,29 @@ public class TransactionHistoryBl {
                 .collect(Collectors.toList());
     }
 
-
     public TransactionHistoryDto updateTransactionHistory(Integer id, TransactionHistoryDto dto) {
         TransactionHistory transaction = transactionHistoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction History not found"));
 
         Users user = usersRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Services service = servicesRepository.findById(dto.getServiceId())
-                .orElseThrow(() -> new RuntimeException("Service not found"));
-        Products product = productsRepository.findById(dto.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Services service = null;
+        if (dto.getServiceId() != null) {
+            service = servicesRepository.findById(dto.getServiceId())
+                    .orElseThrow(() -> new RuntimeException("Service not found"));
+        }
+
+        Products product = null;
+        if (dto.getProductId() != null) {
+            product = productsRepository.findById(dto.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+        }
 
         transaction.setTotalAmount(dto.getTotalAmount());
+        transaction.setQuantity(dto.getQuantity());
+        transaction.setAmountPerUnit(dto.getAmountPerUnit());
+        transaction.setDetail(dto.getDetail());
         transaction.setStatus(dto.getStatus());
         transaction.setUser(user);
         transaction.setService(service);
@@ -143,9 +155,11 @@ public class TransactionHistoryBl {
                 transaction.getStatus(),
                 transaction.getCreatedAt(),
                 transaction.getUser().getUserId(),
-                transaction.getService() != null ? transaction.getService().getServiceId() : null, // ✅ Evita NullPointerException
-                transaction.getProduct() != null ? transaction.getProduct().getProductId() : null  // ✅ Evita NullPointerException
+                transaction.getService() != null ? transaction.getService().getServiceId() : null,
+                transaction.getProduct() != null ? transaction.getProduct().getProductId() : null,
+                transaction.getQuantity(),
+                transaction.getAmountPerUnit(),
+                transaction.getDetail()
         );
     }
-
 }

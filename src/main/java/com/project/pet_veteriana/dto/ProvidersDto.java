@@ -19,7 +19,7 @@ public class ProvidersDto {
     private Integer reviews;
     private String city;
     private String country;
-
+    private Boolean verified; // ✅ Nuevo campo
 
     public ProvidersDto() {
     }
@@ -27,7 +27,7 @@ public class ProvidersDto {
     public ProvidersDto(Integer providerId, Integer userId, String name, String description, String address,
                         String imageUrl, Double rating, LocalDateTime createdAt, LocalDateTime updatedAt,
                         Boolean status, Integer productCount, Integer serviceCount, Integer reviews,
-                        String city, String country) {
+                        String city, String country, Boolean verified) {
         this.providerId = providerId;
         this.userId = userId;
         this.name = name;
@@ -43,8 +43,8 @@ public class ProvidersDto {
         this.reviews = reviews;
         this.city = city;
         this.country = country;
+        this.verified = verified;
     }
-
 
     public Integer getProviderId() {
         return providerId;
@@ -166,4 +166,11 @@ public class ProvidersDto {
         this.country = country;
     }
 
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
 }

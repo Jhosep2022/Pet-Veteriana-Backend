@@ -5,7 +5,6 @@ import com.project.pet_veteriana.dto.ImageS3Dto;
 import com.project.pet_veteriana.entity.*;
 import com.project.pet_veteriana.repository.*;
 import com.project.pet_veteriana.config.JwtTokenProvider;
-import com.project.pet_veteriana.bl.ImagesS3Bl;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +57,6 @@ public class ProvidersBl {
         Optional<Users> user = usersRepository.findById(providersDto.getUserId());
 
         if (user.isPresent()) {
-            // Subir imagen a MinIO y asociarla al proveedor
             ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
 
             Providers provider = new Providers();
@@ -70,6 +68,7 @@ public class ProvidersBl {
             provider.setCreatedAt(LocalDateTime.now());
             provider.setUpdatedAt(LocalDateTime.now());
             provider.setStatus(providersDto.getStatus());
+            provider.setVerified(providersDto.getVerified() != null ? providersDto.getVerified() : false);
             provider.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
 
             provider = providersRepository.save(provider);
@@ -98,9 +97,8 @@ public class ProvidersBl {
         if (provider.isPresent()) {
             Providers prov = provider.get();
 
-            // Verificar si el usuario autenticado es el dueño del perfil
             if (!prov.getUser().getUserId().equals(authenticatedUser.getUserId())) {
-                prov.setReviews(prov.getReviews() + 1); // Solo incrementa si no es el dueño
+                prov.setReviews(prov.getReviews() + 1);
                 providersRepository.save(prov);
             }
 
@@ -116,7 +114,6 @@ public class ProvidersBl {
         if (provider.isPresent()) {
             Providers prov = provider.get();
 
-            // Actualizar imagen si se proporciona
             if (file != null && !file.isEmpty()) {
                 ImageS3Dto imageDto = imagesS3Bl.uploadFile(file);
                 prov.setImage(new ImageS3(imageDto.getImageId(), imageDto.getFileName(), imageDto.getFileType(), imageDto.getSize(), imageDto.getUploadDate()));
@@ -128,6 +125,7 @@ public class ProvidersBl {
             prov.setRating(providersDto.getRating());
             prov.setUpdatedAt(LocalDateTime.now());
             prov.setStatus(providersDto.getStatus());
+            prov.setVerified(providersDto.getVerified());
 
             prov = providersRepository.save(prov);
 
@@ -145,16 +143,13 @@ public class ProvidersBl {
         if (providerOptional.isPresent()) {
             Providers provider = providerOptional.get();
 
-            // Eliminar todas las relaciones en la tabla `spreciality_providers`
             sprecialityProvidersRepository.deleteByProvider(provider);
 
-            // Eliminar todos los códigos promocionales asociados a este proveedor
             List<PromoCodes> promoCodes = promoCodesRepository.findByProvider(provider);
             for (PromoCodes promo : promoCodes) {
                 promoCodesRepository.delete(promo);
             }
 
-            // Eliminar el proveedor de la base de datos
             providersRepository.delete(provider);
 
             logger.info("Provider deleted successfully for ID: {}", id);
@@ -163,12 +158,10 @@ public class ProvidersBl {
         }
     }
 
-
     public boolean existsByUserId(Integer userId) {
         return providersRepository.existsByUser_UserId(userId);
     }
 
-    // Obtener los proveedores con mejor rating (TOP 5)
     public List<ProvidersDto> getTopProviders() {
         return providersRepository.findTop5ByStatusTrueOrderByRatingDesc()
                 .stream()
@@ -176,7 +169,6 @@ public class ProvidersBl {
                 .collect(Collectors.toList());
     }
 
-    // Obtener los 10 proveedores más recientes
     public List<ProvidersDto> getRecentProviders() {
         return providersRepository.findTop10ByStatusTrueOrderByCreatedAtDesc()
                 .stream()
@@ -184,7 +176,6 @@ public class ProvidersBl {
                 .collect(Collectors.toList());
     }
 
-    // Obtener un proveedor por ID para mostrar su tienda
     public ProvidersDto getProviderStoreById(Integer providerId) {
         Optional<Providers> provider = providersRepository.findById(providerId);
         if (provider.isPresent() && provider.get().getStatus()) {
@@ -230,20 +221,17 @@ public class ProvidersBl {
                 0,
                 provider.getReviews(),
                 provider.getCity(),
-                provider.getCountry()
+                provider.getCountry(),
+                provider.getVerified()
         );
-
     }
 
-
-    // Mapear entidad a DTO
     private ProvidersDto mapToDto(Providers provider) {
         String imageUrl = null;
         if (provider.getImage() != null) {
             imageUrl = imagesS3Bl.generateFileUrl(provider.getImage().getFileName());
         }
 
-        // Contar productos y servicios del proveedor
         int productCount = productsRepository.countByProvider(provider);
         int serviceCount = servicesRepository.countByProvider(provider);
 
@@ -261,10 +249,9 @@ public class ProvidersBl {
                 productCount,
                 serviceCount,
                 provider.getReviews(),
-                provider.getCity(),      // <--- Nuevo parámetro
-                provider.getCountry()    // <--- Nuevo parámetro
+                provider.getCity(),
+                provider.getCountry(),
+                provider.getVerified()
         );
     }
-
-
 }

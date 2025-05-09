@@ -115,10 +115,12 @@ public class ServicesBl {
         service.setTipoAtencion(servicesDto.getTipoAtencion());
         service.setStatus(servicesDto.getStatus());
         service.setProvider(provider);
+        service.setOnSale(servicesDto.getOnSale());
 
         Services updatedService = servicesRepository.save(service);
         return Optional.of(mapToDto(updatedService));
     }
+
 
     // Eliminar un servicio
     @Transactional
@@ -157,9 +159,6 @@ public class ServicesBl {
 
         return false;
     }
-
-
-
 
 
     // Obtener los servicios recientes (últimos 10 creados)
